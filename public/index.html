@@ -1,43 +1,110 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="Web site created using create-react-app"
-    />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <!--
-      manifest.json provides metadata used when your web app is installed on a
-      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
-    -->
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <!--
-      Notice the use of %PUBLIC_URL% in the tags above.
-      It will be replaced with the URL of the `public` folder during the build.
-      Only files inside the `public` folder can be referenced from the HTML.
+<head>
+    <meta charset="UTF-8">
+    <title>Your Name - Music Portfolio</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Hotbar Navigation -->
+    <nav>
+        <ul>
+            <li><a href="#home">HOME</a></li>
+            <li><a href="#about">ABOUT</a></li>
+            <li><a href="#resume">RESUME</a></li>
+            <li><a href="#projects">PROJECTS</a></li>
+            <li><a href="#activities">ACTIVITIES</a></li>
+            <li><a href="#statistics">STATISTICS</a></li>
+            <li><a href="#contact">CONTACT</a></li>
+        </ul>
+    </nav>
 
-      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-      work correctly both with client-side routing and a non-root public URL.
-      Learn how to configure a non-root public URL by running `npm run build`.
-    -->
-    <title>React App</title>
-  </head>
-  <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
+    <!-- Home Section -->
+    <section id="home" class="hero music-bg">
+        <h1>Your Name</h1>
+        <h3>Musician | Composer | Producer</h3>
+        <div class="social-icons">
+            <!-- Replace with actual icons/links -->
+            <a href="#"><img src="github-icon.png" alt=""></a>
+            <a href="#"><img src="linkedin-icon.png" alt=""></a>
+            <a href="mailto:your@email.com"><img src="email-icon.png" alt=""></a>
+            <a href="#"><img src="spotify-icon.png" alt=""></a>
+        </div>
+    </section>
 
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
+    <!-- About Me Section -->
+    <section id="about">
+        <h2>Let me introduce myself.</h2>
+        <p>
+            I'm a passionate musician with expertise in composition, audio engineering, and performance. My journey blends classical training with modern music production and experimentation across genres. I believe music is a universal language that brings people together.
+        </p>
+        <div class="profile-info">
+            <p><strong>Music Genres:</strong> Jazz, Classical, Pop, Electronic</p>
+            <p><strong>Main instruments:</strong> Piano, Guitar, Synths</p>
+        </div>
+    </section>
 
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
-  </body>
+    <!-- Resume Section -->
+    <section id="resume">
+        <h2>My Credentials</h2>
+        <ul>
+            <li>Music Producer at XYZ Studio (2022 - Present)</li>
+            <li>Composer for Film/TV (2021 - Present)</li>
+            <li>B.Mus in Composition (2020)</li>
+        </ul>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects">
+        <h2>Music Projects</h2>
+        <div class="project-gallery">
+            <div class="project-card">
+                <img src="album-art1.png" alt="Project 1">
+                <p>Released EP "Harmony Waves" (2023)</p>
+            </div>
+            <div class="project-card">
+                <img src="album-art2.png" alt="Project 2">
+                <p>Original Score for Indie Film "Finding Sound"</p>
+            </div>
+            <div class="project-card">
+                <img src="live-performance.jpg" alt="Project 3">
+                <p>Live Performance Series: Synth Night</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Activities Section -->
+    <section id="activities">
+        <h2>Musical Activities</h2>
+        <ul>
+            <li>Founder/Co-President, Local Music Collective</li>
+            <li>Workshop Leader, Music Production for Teens</li>
+            <li>Performer at community concerts & open mics</li>
+        </ul>
+    </section>
+
+    <!-- Statistics Section -->
+    <section id="statistics">
+        <h2>My Musical Stats</h2>
+        <div class="stats-bar">
+            <div>200+ Songs Composed</div>
+            <div>50+ Live Performances</div>
+            <div>15+ Years Playing Instruments</div>
+            <div>1000+ Hours Recording/Editing</div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact">
+        <h2>Contact Me</h2>
+        <p>Email: your@email.com</p>
+        <p>Instagram: @yourmusicprofile</p>
+        <p>Spotify: your-spotify-link</p>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 Your Name. Designed by You.</p>
+    </footer>
+</body>
 </html>
