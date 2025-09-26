@@ -1,43 +1,421 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="Web site created using create-react-app"
-    />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <!--
-      manifest.json provides metadata used when your web app is installed on a
-      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
-    -->
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <!--
-      Notice the use of %PUBLIC_URL% in the tags above.
-      It will be replaced with the URL of the `public` folder during the build.
-      Only files inside the `public` folder can be referenced from the HTML.
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ivan Wu - Portfolio</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/lucide.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <!-- Desktop Navigation -->
+            <div class="nav-desktop">
+                <button onclick="scrollToSection('home')" class="nav-link active">HOME</button>
+                <button onclick="scrollToSection('about')" class="nav-link">ABOUT</button>
+                <button onclick="scrollToSection('resume')" class="nav-link">RESUME</button>
+                <button onclick="scrollToSection('projects')" class="nav-link">PROJECTS</button>
+                <button onclick="scrollToSection('activities')" class="nav-link">ACTIVITIES</button>
+                <button onclick="scrollToSection('statistics')" class="nav-link">STATISTICS</button>
+                <button onclick="scrollToSection('contact')" class="nav-link">CONTACT</button>
+            </div>
 
-      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-      work correctly both with client-side routing and a non-root public URL.
-      Learn how to configure a non-root public URL by running `npm run build`.
-    -->
-    <title>React App</title>
-  </head>
-  <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
+            <!-- Mobile Menu Button -->
+            <button class="mobile-menu-btn" onclick="toggleMenu()">
+                <span class="hamburger-icon">☰</span>
+                <span class="close-icon hidden">✕</span>
+            </button>
+        </div>
+
+        <!-- Mobile Navigation -->
+        <div class="nav-mobile hidden">
+            <div class="nav-mobile-content">
+                <button onclick="scrollToSection('home')" class="nav-link-mobile">HOME</button>
+                <button onclick="scrollToSection('about')" class="nav-link-mobile">ABOUT</button>
+                <button onclick="scrollToSection('resume')" class="nav-link-mobile">RESUME</button>
+                <button onclick="scrollToSection('projects')" class="nav-link-mobile">PROJECTS</button>
+                <button onclick="scrollToSection('activities')" class="nav-link-mobile">ACTIVITIES</button>
+                <button onclick="scrollToSection('statistics')" class="nav-link-mobile">STATISTICS</button>
+                <button onclick="scrollToSection('contact')" class="nav-link-mobile">CONTACT</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h1 class="hero-title">IVAN WU</h1>
+            <p class="hero-subtitle">Software Engineer | Illustrator | Designer</p>
+            
+            <!-- Social Icons -->
+            <div class="social-icons">
+                <div class="social-icon">📧</div>
+                <div class="social-icon">💼</div>
+                <div class="social-icon">🔗</div>
+                <div class="social-icon-custom">S</div>
+            </div>
+
+            <!-- Scroll Down Arrow -->
+            <div class="scroll-arrow">
+                <span>⌄</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="container">
+            <div class="section-header">
+                <p class="section-label">About</p>
+                <h2 class="section-title">Let me introduce myself.</h2>
+            </div>
+            
+            <div class="about-content">
+                <div class="about-intro">
+                    <div class="profile-image">
+                        <img src="/api/placeholder/200/200" alt="Profile" />
+                    </div>
+                    <p class="intro-text">
+                        I’m Ivan Wu, an aspiring software engineer passionate about creating innovative solutions at the intersection of technology, design, and problem-solving. 
+                        I entered the University at Buffalo as an Architecture major, later switching to Computer Science to pursue my passion for programming and computational thinking. 
+                        My diverse experiences—from art and design to software development—shape my ability to approach challenges creatively and with perseverance.
+                    </p>
+                </div>
+
+                <div class="about-details">
+                    <!-- Profile -->
+                    <div class="profile-section">
+                        <h3 class="subsection-title">PROFILE</h3>
+                        <p class="profile-description">
+                            Currently a Computer Science major at UB with hands-on experience in object-oriented programming, systems programming in C, and software design. 
+                            Open to opportunities in software engineering, product development, or startups where I can leverage both technical expertise and creativity. 
+                            If you think I’d be a strong fit, feel free to reach out at .
+                            <a href="mailto:sunnybd97@gmail.com" class="email-link">ivanwu2024@gmail.com</a>.
+                        </p>
+                        <div class="profile-info">
+                            <div class="info-item">
+                                <span class="info-label">FULL NAME:</span>
+                                <div class="info-value">Ivan Wu</div>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">EMAIL:</span>
+                                <div class="info-value">ivanwu2024@gmail.com</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Skills -->
+                    <div class="skills-section">
+                        <h3 class="subsection-title">SKILLS</h3>
+                        <p class="skills-description">
+                            I'm a cell-like independent teamworker, strong in 
+                            research and coding. My areas of expertise are 
+                            computer science, bioinformatics, and genetics. Below 
+                            are highlights of my technical skills:
+                        </p>
+                        
+                        <div class="skills-list">
+                            <div class="skill-item">
+                                <div class="skill-header">
+                                    <span class="skill-name">MS SUITE</span>
+                                    <span class="skill-percentage">90%</span>
+                                </div>
+                                <div class="skill-bar">
+                                    <div class="skill-progress" data-width="90"></div>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <div class="skill-header">
+                                    <span class="skill-name">PYTHON</span>
+                                    <span class="skill-percentage">90%</span>
+                                </div>
+                                <div class="skill-bar">
+                                    <div class="skill-progress" data-width="90"></div>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <div class="skill-header">
+                                    <span class="skill-name">JS/TS/REACT</span>
+                                    <span class="skill-percentage">70%</span>
+                                </div>
+                                <div class="skill-bar">
+                                    <div class="skill-progress" data-width="70"></div>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <div class="skill-header">
+                                    <span class="skill-name">C/C++</span>
+                                    <span class="skill-percentage">60%</span>
+                                </div>
+                                <div class="skill-bar">
+                                    <div class="skill-progress" data-width="60"></div>
+                                </div>
+                            </div>
+                            <div class="skill-item">
+                                <div class="skill-header">
+                                    <span class="skill-name">JAVA</span>
+                                    <span class="skill-percentage">60%</span>
+                                </div>
+                                <div class="skill-bar">
+                                    <div class="skill-progress" data-width="60"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Resume Section -->
+    <section id="resume" class="resume">
+        <div class="container">
+            <div class="section-header">
+                <p class="section-label">Resume</p>
+                <h2 class="section-title">More of my credentials.</h2>
+                <p class="section-description">Here are my work experiences and education.</p>
+            </div>
+
+            <div class="work-experience">
+                <h3 class="work-title">Work Experience</h3>
+                
+                <div class="timeline">
+                    <!-- Amazon -->
+                    <div class="timeline-item">
+                        <div class="timeline-date">
+                            <h4 class="position-title">Software Engineer</h4>
+                            <p class="date-range">March 2022 - Present</p>
+                        </div>
+                        <div class="timeline-icon">
+                            <div class="icon-circle">💼</div>
+                        </div>
+                        <div class="timeline-content">
+                            <h4 class="company-name">Amazon</h4>
+                            <p class="job-description">
+                                Team member at Amazon Health & Wellness Halo Device CVML team. Won 
+                                first place in healthtech hackathon with software prototype to highlight user's 
+                                milestones and achievement to drive customer engagement.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Invitae -->
+                    <div class="timeline-item">
+                        <div class="timeline-date">
+                            <h4 class="position-title">Software Engineer</h4>
+                            <p class="date-range">June 2020 - March 2022</p>
+                        </div>
+                        <div class="timeline-icon">
+                            <div class="icon-circle">💼</div>
+                        </div>
+                        <div class="timeline-content">
+                            <h4 class="company-name">Invitae</h4>
+                            <p class="job-description">
+                                Owned fundamental company data transfer pipeline transferring genomic 
+                                data from lab to compute clusters. Built automation system for 
+                                troubleshooting sequencing results from variant confirmation process. 
+                                Created complex and interactive web visualization tool for clinical 
+                                interpretation based on React framework and Plotly visual tools.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Genentech -->
+                    <div class="timeline-item">
+                        <div class="timeline-date">
+                            <h4 class="position-title">Bioinformatics Intern</h4>
+                            <p class="date-range">June 2019 - September 2019</p>
+                        </div>
+                        <div class="timeline-icon">
+                            <div class="icon-circle">💼</div>
+                        </div>
+                        <div class="timeline-content">
+                            <h4 class="company-name">Genentech</h4>
+                            <p class="job-description">
+                                Worked in proteomics department under R&D. Created web data analysis & 
+                                visualization for MS based proteomics using python pyramid server & 
+                                typescript client. Ran high throughput computation analysis through Spotfire, 
+                                R, and SQL queries. Was selected for Genentech Leader Intern Exchange 
+                                program (gLINX) and mentored by senior VP executive
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="projects">
+        <div class="container">
+            <div class="section-header">
+                <p class="section-label">Projects</p>
+                <h2 class="section-title">Check out my creations.</h2>
+            </div>
+            
+            <div class="projects-grid">
+                <div class="project-card">
+                    <div class="project-image icd-project">ICD</div>
+                </div>
+                <div class="project-card">
+                    <div class="project-image network-project">Network Diagram</div>
+                </div>
+                <div class="project-card">
+                    <div class="project-image dots-project">Dots Away</div>
+                </div>
+                <div class="project-card">
+                    <div class="project-image gradient-project"></div>
+                </div>
+                <div class="project-card">
+                    <div class="project-image portfolio-project">
+                        <h3>IVAN WU</h3>
+                        <p>Data Analyst | Software Engineer | Founder</p>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="project-image sigma-project">SIGMA PSI ZETA</div>
+                </div>
+                <div class="project-card">
+                    <div class="project-image jellyfish-project">Combating Jellyfish Bloom</div>
+                </div>
+                <div class="project-card">
+                    <div class="project-image grid-project">
+                        <div class="color-grid">
+                            <div class="grid-cell red"></div>
+                            <div class="grid-cell blue"></div>
+                            <div class="grid-cell yellow"></div>
+                            <div class="grid-cell green"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Activities Section -->
+    <section id="activities" class="activities">
+        <div class="activities-background"></div>
+        <div class="container">
+            <div class="section-header">
+                <p class="section-label">Activities</p>
+                <h2 class="section-title">My positions during undergraduate.</h2>
+                <p class="section-description">Summary of my leadership & extracurricular activities</p>
+            </div>
+
+            <div class="activities-list">
+                <!-- Founder/Co-President -->
+                <div class="activity-item">
+                    <h3 class="activity-title">Founder/Co-President</h3>
+                    <p class="activity-org">Stanford Transhumanist Association • March 2018 - Present</p>
+                    <div class="activity-description">
+                        <p>Organized executive board members & meeting.</p>
+                        <p>Designed STA discussion event posters.</p>
+                        <p>Took record of STA meeting & discussion.</p>
+                        <p>Recruited Stanford students into club members.</p>
+                    </div>
+                </div>
+
+                <!-- Webmaster -->
+                <div class="activity-item">
+                    <h3 class="activity-title">Webmaster</h3>
+                    <p class="activity-org">Omicron Charter, Sigma Psi Zeta • January 2018 - Present</p>
+                    <div class="activity-description">
+                        <p>Ran homepage for the biggest Asian interest sorority in campus.</p>
+                        <p>Publicized the organization's activity, redesigned user interface that doubled website traffic.</p>
+                        <a href="#" class="activity-link">Sigma Psi Zeta</a>
+                    </div>
+                </div>
+
+                <!-- Student Associate -->
+                <div class="activity-item">
+                    <h3 class="activity-title">Student Associate</h3>
+                    <p class="activity-org">Lane Library, Stanford Medical Center • March 2018 - Present</p>
+                    <div class="activity-description">
+                        <p>Helped manage 10000+ books through returning, lending, and shelving books.</p>
+                        <p>Assisted library users at the front desk.</p>
+                        <p>Participated in library user statistics through Google Docs.</p>
+                    </div>
+                </div>
+
+                <!-- Community Director -->
+                <div class="activity-item">
+                    <h3 class="activity-title">Community Director</h3>
+                    <p class="activity-org">Biology Interdisciplinary Open Maker Environment, Stanford • March 2003</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistics Section -->
+    <section id="statistics" class="statistics">
+        <div class="container">
+            <h2 class="section-title">Statistics</h2>
+            <p class="section-description">This section can showcase your achievements, metrics, or data visualizations</p>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">50+</div>
+                    <div class="stat-label">Projects Completed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">5+</div>
+                    <div class="stat-label">Years Experience</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">100+</div>
+                    <div class="stat-label">Code Commits</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">15+</div>
+                    <div class="stat-label">Technologies Used</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <h2 class="section-title">Get In Touch</h2>
+            <p class="contact-description">
+                I'm always interested in new opportunities and collaborations. 
+                Feel free to reach out if you'd like to connect or discuss potential projects.
+            </p>
+            
+            <div class="contact-grid">
+                <div class="contact-card">
+                    <div class="contact-icon">📧</div>
+                    <h4 class="contact-title">Email</h4>
+                    <p class="contact-info">sunnybd97@gmail.com</p>
+                </div>
+                <div class="contact-card">
+                    <div class="contact-icon">📞</div>
+                    <h4 class="contact-title">Phone</h4>
+                    <p class="contact-info">+1 (555) 123-4567</p>
+                </div>
+                <div class="contact-card">
+                    <div class="contact-icon">💼</div>
+                    <h4 class="contact-title">LinkedIn</h4>
+                    <p class="contact-info">linkedin.com/in/sunwoo</p>
+                </div>
+                <div class="contact-card">
+                    <div class="contact-icon">🔗</div>
+                    <h4 class="contact-title">GitHub</h4>
+                    <p class="contact-info">github.com/sunwoo</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2025 Sunwoo Kang. All rights reserved.</p>
+    </footer>
+    
     <div id="root"></div>
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
 
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
-
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
-  </body>
+    <script src="script.js"></script>
+</body>
 </html>
