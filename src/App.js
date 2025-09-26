@@ -9,7 +9,14 @@ function App() {
   };
 
   const scrollToSection = (sectionId) => {
-    document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth' });
+    const element = document.getElementById(sectionId);
+    if (element) {
+      const offsetTop = element.offsetTop - 80;
+      window.scrollTo({
+        top: offsetTop,
+        behavior: 'smooth'
+      });
+    }
     setIsMenuOpen(false);
   };
 
@@ -31,10 +38,7 @@ function App() {
       });
     };
     
-    // Initial check
     animateSkillBars();
-    
-    // Check on scroll
     window.addEventListener('scroll', animateSkillBars);
     
     return () => window.removeEventListener('scroll', animateSkillBars);
@@ -55,7 +59,6 @@ function App() {
       });
     }, observerOptions);
     
-    // Add fade-in class to elements and observe them
     const elementsToAnimate = document.querySelectorAll(
       '.section-header, .about-intro, .about-details, .timeline-item, .project-card, .activity-item, .stat-card, .contact-card'
     );
@@ -65,7 +68,33 @@ function App() {
       observer.observe(element);
     });
 
-    return () => observer.disconnect();
+    // Vinyl record scroll effect with debugging
+    const handleVinylScroll = () => {
+      const scrollY = window.scrollY;
+      const windowHeight = window.innerHeight;
+      const vinylRecord = document.querySelector('.vinyl-record');
+      const threshold = windowHeight * 0.1; // Trigger at 10% scroll
+      
+      if (vinylRecord) {
+        if (scrollY > threshold) {
+          vinylRecord.classList.add('scrolled');
+          console.log('Vinyl scrolled - adding class'); // Debug
+        } else {
+          vinylRecord.classList.remove('scrolled');
+          console.log('Vinyl not scrolled - removing class'); // Debug
+        }
+      }
+    };
+
+    // Call once to set initial state
+    handleVinylScroll();
+    
+    window.addEventListener('scroll', handleVinylScroll);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('scroll', handleVinylScroll);
+    };
   }, []);
 
   return (
@@ -73,7 +102,6 @@ function App() {
       {/* Navigation */}
       <nav className="navbar">
         <div className="nav-container">
-          {/* Desktop Navigation */}
           <div className="nav-desktop">
             <button onClick={() => scrollToSection('home')} className="nav-link active">
               HOME
@@ -98,14 +126,12 @@ function App() {
             </button>
           </div>
 
-          {/* Mobile Menu Button */}
           <button className="mobile-menu-btn" onClick={toggleMenu}>
             <span className={`hamburger-icon ${isMenuOpen ? 'hidden' : ''}`}>☰</span>
             <span className={`close-icon ${!isMenuOpen ? 'hidden' : ''}`}>✕</span>
           </button>
         </div>
 
-        {/* Mobile Navigation */}
         <div className={`nav-mobile ${!isMenuOpen ? 'hidden' : ''}`}>
           <div className="nav-mobile-content">
             <button onClick={() => scrollToSection('home')} className="nav-link-mobile">HOME</button>
@@ -121,20 +147,21 @@ function App() {
 
       {/* Hero Section */}
       <section id="home" className="hero">
+        <div className="vinyl-record">
+          <div className="vinyl-center"></div>
+        </div>
         <div className="hero-overlay"></div>
         <div className="hero-content">
-          <h1 className="hero-title">Sunwoo Kang</h1>
-          <p className="hero-subtitle">Data Analyst | Software Engineer | Founder</p>
+          <h1 className="hero-title">IVAN WU</h1>
+          <p className="hero-subtitle">Software Engineer | Illustrator | Designer</p>
           
-          {/* Social Icons */}
           <div className="social-icons">
             <div className="social-icon">📧</div>
             <div className="social-icon">💼</div>
             <div className="social-icon">🔗</div>
-            <div className="social-icon-custom">S</div>
+            <div className="social-icon-custom">I</div>
           </div>
 
-          {/* Scroll Down Arrow */}
           <div className="scroll-arrow">
             <span>⌄</span>
           </div>
@@ -152,49 +179,45 @@ function App() {
           <div className="about-content">
             <div className="about-intro">
               <div className="profile-image">
-                <img src="/api/placeholder/200/200" alt="Profile" />
+                <img src="/headshot.JPG" alt="Profile" />
               </div>
               <p className="intro-text">
-                I'm an engineer seeking moonshot in the health / bio sector. I'm also 
-                Stanford class of 2020 B.S. in Biomedical Computation, and class of 
-                2021 M.S. in Computer Science AI specialization. My primary 
-                interests have been precision health, data flow, zero to one, and the list 
-                is still growing.
+                I'm Ivan Wu, an aspiring software engineer passionate about creating innovative solutions at the intersection of technology, design, and problem-solving. 
+                I entered the University at Buffalo as an Architecture major, later switching to Computer Science to pursue my passion for programming and computational thinking. 
+                My diverse experiences—from art and design to software development—shape my ability to approach challenges creatively and with perseverance.
               </p>
             </div>
 
             <div className="about-details">
-              {/* Profile */}
               <div className="profile-section">
                 <h3 className="subsection-title">PROFILE</h3>
                 <p className="profile-description">
-                  Currently I have a job, but am open to a new software 
-                  engineering/product owner/startup opportunities. If 
-                  you think I'm a good fit, please contact me via{' '}
-                  <a href="mailto:sunnybd97@gmail.com" className="email-link">
-                    sunnybd97@gmail.com
+                  Currently a Computer Science major at UB with hands-on experience in object-oriented programming, systems programming in C, and software design. 
+                  Open to opportunities in software engineering, product development, or startups where I can leverage both technical expertise and creativity. 
+                  If you think I'd be a strong fit, feel free to reach out at{' '}
+                  <a href="mailto:ivanwu2024@gmail.com" className="email-link">
+                    ivanwu2024@gmail.com
                   </a>.
                 </p>
                 <div className="profile-info">
                   <div className="info-item">
                     <span className="info-label">FULL NAME:</span>
-                    <div className="info-value">Sunwoo Kang</div>
+                    <div className="info-value">Ivan Wu</div>
                   </div>
                   <div className="info-item">
                     <span className="info-label">EMAIL:</span>
-                    <div className="info-value">sunnybd97@gmail.com</div>
+                    <div className="info-value">ivanwu2024@gmail.com</div>
                   </div>
                 </div>
               </div>
 
-              {/* Skills */}
               <div className="skills-section">
                 <h3 className="subsection-title">SKILLS</h3>
                 <p className="skills-description">
-                  I'm a cell-like independent teamworker, strong in 
-                  research and coding. My areas of expertise are 
-                  computer science, bioinformatics, and genetics. Below 
-                  are highlights of my technical skills:
+                  I bring together technical skill, creativity, 
+                  and leadership experience to contribute effectively 
+                  as both a team player and independent problem-solver. 
+                  Below are highlights of my technical skills:
                 </p>
                 
                 <div className="skills-list">
@@ -231,70 +254,112 @@ function App() {
           <div className="section-header">
             <p className="section-label">Resume</p>
             <h2 className="section-title">More of my credentials.</h2>
-            <p className="section-description">Here are my work experiences and education.</p>
+            <p className="section-description">Here are my experiences and education.</p>
           </div>
 
           <div className="work-experience">
-            <h3 className="work-title">Work Experience</h3>
+            <h3 className="work-title">Experience</h3>
             
             <div className="timeline">
-              {/* Amazon */}
+              {/* Weather App */}
               <div className="timeline-item">
                 <div className="timeline-date">
-                  <h4 className="position-title">Software Engineer</h4>
-                  <p className="date-range">March 2022 - Present</p>
+                  <h4 className="position-title">Independent Project</h4>
+                  <p className="date-range">May 2025 - June 2025</p>
                 </div>
                 <div className="timeline-icon">
                   <div className="icon-circle">💼</div>
                 </div>
                 <div className="timeline-content">
-                  <h4 className="company-name">Amazon</h4>
+                  <h4 className="company-name">Heatseek &lt;3</h4>
                   <p className="job-description">
-                    Team member at Amazon Health & Wellness Halo Device CVML team. Won 
-                    first place in healthtech hackathon with software prototype to highlight user's 
-                    milestones and achievement to drive customer engagement.
+                    Built a cross-platform desktop application using 
+                    Electron.js with custom frameless window design.
+                    Integrated Visual Crossing Weather API for 
+                    real-time weather data retrieval with error handling.
+                    Implemented smooth CSS animations including floating 
+                    bubbles and character head rotation.
                   </p>
                 </div>
               </div>
 
-              {/* Invitae */}
+              {/* Media App */}
               <div className="timeline-item">
                 <div className="timeline-date">
-                  <h4 className="position-title">Software Engineer</h4>
-                  <p className="date-range">June 2020 - March 2022</p>
+                  <h4 className="position-title">Student Project</h4>
+                  <p className="date-range">February 2024 - June 2024</p>
                 </div>
                 <div className="timeline-icon">
                   <div className="icon-circle">💼</div>
                 </div>
                 <div className="timeline-content">
-                  <h4 className="company-name">Invitae</h4>
+                  <h4 className="company-name">Multi-Media Database</h4>
                   <p className="job-description">
-                    Owned fundamental company data transfer pipeline transferring genomic 
-                    data from lab to compute clusters. Built automation system for 
-                    troubleshooting sequencing results from variant confirmation process. 
-                    Created complex and interactive web visualization tool for clinical 
-                    interpretation based on React framework and Plotly visual tools.
+                    Designed and developed a robust multimedia database system 
+                    using object-oriented programming principles in Java. 
+                    Implemented classes for movies, songs, and reviewers, 
+                    with clearly defined relationships and behaviors.
                   </p>
                 </div>
               </div>
 
-              {/* Genentech */}
+              {/* Message App */}
               <div className="timeline-item">
                 <div className="timeline-date">
-                  <h4 className="position-title">Bioinformatics Intern</h4>
-                  <p className="date-range">June 2019 - September 2019</p>
+                  <h4 className="position-title">Student Project</h4>
+                  <p className="date-range">February 2024 - June 2024</p>
                 </div>
                 <div className="timeline-icon">
                   <div className="icon-circle">💼</div>
                 </div>
                 <div className="timeline-content">
-                  <h4 className="company-name">Genentech</h4>
+                  <h4 className="company-name">Instant Messenger</h4>
                   <p className="job-description">
-                    Worked in proteomics department under R&D. Created web data analysis & 
-                    visualization for MS based proteomics using python pyramid server & 
-                    typescript client. Ran high throughput computation analysis through Spotfire, 
-                    R, and SQL queries. Was selected for Genentech Leader Intern Exchange 
-                    program (gLINX) and mentored by senior VP executive
+                    Developed packet encoding and decoding functionality for an 
+                    instant messaging system in C, gaining hands-on experience with 
+                    data serialization, pointer arithmetic, and raw memory access to 
+                    efficiently manage transmissions.
+                  </p>
+                </div>
+              </div>
+
+              {/* Community Collaborator */}
+              <div className="timeline-item">
+                <div className="timeline-date">
+                  <h4 className="position-title">Community Collaborator</h4>
+                  <p className="date-range">January 2025 - Present</p>
+                </div>
+                <div className="timeline-icon">
+                  <div className="icon-circle">💼</div>
+                </div>
+                <div className="timeline-content">
+                  <h4 className="company-name">Neighborhood Fundraisers & Welfare Organizations</h4>
+                  <p className="job-description">
+                    Partnered with local organizations to support underserved populations.
+                    Coordinated fundraising events and welfare initiatives to directly aid those in need.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="education-experience">
+            <h3 className="work-title">Education</h3>
+            
+            <div className="timeline">
+              <div className="timeline-item">
+                <div className="timeline-date">
+                  <h4 className="position-title">Bachelor's Degree</h4>
+                  <p className="date-range">August 2022 - May 2027</p>
+                </div>
+                <div className="timeline-icon">
+                  <div className="icon-circle">🎓</div>
+                </div>
+                <div className="timeline-content">
+                  <h4 className="company-name">University at Buffalo</h4>
+                  <p className="job-description">
+                    Coursework: Discrete Structure, Data Structures, Algorithms & Complexity, Programming Languages, Systems Programming
+                    <br />Interests: Software engineering, Marketing, Product innovation
                   </p>
                 </div>
               </div>
@@ -326,15 +391,15 @@ function App() {
             </div>
             <div className="project-card">
               <div className="project-image portfolio-project">
-                <h3>Sunwoo Kang</h3>
-                <p>Data Analyst | Software Engineer | Founder</p>
+                <h3>IVAN WU</h3>
+                <p>Software Engineer | Illustrator | Designer</p>
               </div>
             </div>
             <div className="project-card">
-              <div className="project-image sigma-project">SIGMA PSI ZETA</div>
+              <div className="project-image sigma-project">ALPHA KAPPA PSI</div>
             </div>
             <div className="project-card">
-              <div className="project-image jellyfish-project">Combating Jellyfish Bloom</div>
+              <div className="project-image jellyfish-project">Heatseek</div>
             </div>
             <div className="project-card">
               <div className="project-image grid-project">
@@ -361,44 +426,34 @@ function App() {
           </div>
 
           <div className="activities-list">
-            {/* Founder/Co-President */}
             <div className="activity-item">
-              <h3 className="activity-title">Founder/Co-President</h3>
-              <p className="activity-org">Stanford Transhumanist Association • March 2018 - Present</p>
+              <h3 className="activity-title">Member</h3>
+              <p className="activity-org">Alpha Kappa Psi Professional Business Fraternity • August 2024 - Present</p>
               <div className="activity-description">
-                <p>Organized executive board members & meeting.</p>
-                <p>Designed STA discussion event posters.</p>
-                <p>Took record of STA meeting & discussion.</p>
-                <p>Recruited Stanford students into club members.</p>
+                <p>Participated in professional development workshops and networking events.</p>
+                <p>Collaborated with fellow members on business case competitions and projects.</p>
+                <p>Developed leadership and teamwork skills through fraternity activities.</p>
               </div>
             </div>
 
-            {/* Webmaster */}
             <div className="activity-item">
-              <h3 className="activity-title">Webmaster</h3>
-              <p className="activity-org">Omicron Charter, Sigma Psi Zeta • January 2018 - Present</p>
+              <h3 className="activity-title">Community Volunteer</h3>
+              <p className="activity-org">Local Buffalo Organizations • January 2023 - Present</p>
               <div className="activity-description">
-                <p>Ran homepage for the biggest Asian interest sorority in campus.</p>
-                <p>Publicized the organization's activity, redesigned user interface that doubled website traffic.</p>
-                <a href="#" className="activity-link">Sigma Psi Zeta</a>
+                <p>Organized and participated in community fundraising events.</p>
+                <p>Supported welfare initiatives for underserved populations in Buffalo area.</p>
+                <p>Coordinated with local organizations to maximize community impact.</p>
               </div>
             </div>
 
-            {/* Student Associate */}
             <div className="activity-item">
-              <h3 className="activity-title">Student Associate</h3>
-              <p className="activity-org">Lane Library, Stanford Medical Center • March 2018 - Present</p>
+              <h3 className="activity-title">Freelance Designer</h3>
+              <p className="activity-org">Independent Work • June 2020 - Present</p>
               <div className="activity-description">
-                <p>Helped manage 10000+ books through returning, lending, and shelving books.</p>
-                <p>Assisted library users at the front desk.</p>
-                <p>Participated in library user statistics through Google Docs.</p>
+                <p>Created digital illustrations and design work for various clients.</p>
+                <p>Developed brand identity materials and marketing graphics.</p>
+                <p>Managed client relationships and project timelines independently.</p>
               </div>
-            </div>
-
-            {/* Community Director */}
-            <div className="activity-item">
-              <h3 className="activity-title">Community Director</h3>
-              <p className="activity-org">Biology Interdisciplinary Open Maker Environment, Stanford • March 2003</p>
             </div>
           </div>
         </div>
@@ -408,22 +463,22 @@ function App() {
       <section id="statistics" className="statistics">
         <div className="container">
           <h2 className="section-title">Statistics</h2>
-          <p className="section-description">This section can showcase your achievements, metrics, or data visualizations</p>
+          <p className="section-description">Some metrics that showcase my journey and growth</p>
           <div className="stats-grid">
             <div className="stat-card">
-              <div className="stat-number">50+</div>
+              <div className="stat-number">10+</div>
               <div className="stat-label">Projects Completed</div>
             </div>
             <div className="stat-card">
-              <div className="stat-number">5+</div>
-              <div className="stat-label">Years Experience</div>
+              <div className="stat-number">3+</div>
+              <div className="stat-label">Years Coding</div>
             </div>
             <div className="stat-card">
-              <div className="stat-number">100+</div>
+              <div className="stat-number">500+</div>
               <div className="stat-label">Code Commits</div>
             </div>
             <div className="stat-card">
-              <div className="stat-number">15+</div>
+              <div className="stat-number">8+</div>
               <div className="stat-label">Technologies Used</div>
             </div>
           </div>
@@ -443,22 +498,22 @@ function App() {
             <div className="contact-card">
               <div className="contact-icon">📧</div>
               <h4 className="contact-title">Email</h4>
-              <p className="contact-info">sunnybd97@gmail.com</p>
+              <p className="contact-info">ivanwu2024@gmail.com</p>
             </div>
             <div className="contact-card">
               <div className="contact-icon">📞</div>
               <h4 className="contact-title">Phone</h4>
-              <p className="contact-info">+1 (555) 123-4567</p>
+              <p className="contact-info">+1 (347) 425-5405</p>
             </div>
             <div className="contact-card">
               <div className="contact-icon">💼</div>
               <h4 className="contact-title">LinkedIn</h4>
-              <p className="contact-info">linkedin.com/in/sunwoo</p>
+              <p className="contact-info">linkedin.com/in/ivanw23</p>
             </div>
             <div className="contact-card">
               <div className="contact-icon">🔗</div>
               <h4 className="contact-title">GitHub</h4>
-              <p className="contact-info">github.com/sunwoo</p>
+              <p className="contact-info">github.com/ivanwu23</p>
             </div>
           </div>
         </div>
@@ -466,7 +521,7 @@ function App() {
 
       {/* Footer */}
       <footer className="footer">
-        <p>&copy; 2025 Sunwoo Kang. All rights reserved.</p>
+        <p>&copy; 2025 Ivan Wu. All rights reserved.</p>
       </footer>
     </div>
   );
