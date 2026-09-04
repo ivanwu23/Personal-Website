@@ -38,8 +38,29 @@ export default function ShootingStars() {
       setStars((prev) => [...prev, makeStar()])
       timeoutId = window.setTimeout(spawn, MIN_GAP + Math.random() * (MAX_GAP - MIN_GAP))
     }
-    timeoutId = window.setTimeout(spawn, 600 + Math.random() * 1600)
-    return () => window.clearTimeout(timeoutId)
+    function start() {
+      window.clearTimeout(timeoutId)
+      timeoutId = window.setTimeout(spawn, 600 + Math.random() * 1600)
+    }
+
+    // In a background tab, CSS animations don't run so onAnimationEnd never
+    // fires, while throttled timers keep queuing stars. Both add up and then
+    // stampede on return. Stop spawning and drop the backlog while hidden.
+    function handleVisibility() {
+      if (document.hidden) {
+        window.clearTimeout(timeoutId)
+        setStars([])
+      } else {
+        start()
+      }
+    }
+
+    if (!document.hidden) start()
+    document.addEventListener('visibilitychange', handleVisibility)
+    return () => {
+      window.clearTimeout(timeoutId)
+      document.removeEventListener('visibilitychange', handleVisibility)
+    }
   }, [])
 
   function removeStar(id: string) {
