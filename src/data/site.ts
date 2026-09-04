@@ -24,7 +24,9 @@ export const SKILLS = {
 export const NAV_LINKS = [
   { label: 'Home', to: '/' },
   { label: 'About', to: '/about' },
+  { label: 'Resume', to: '/resume' },
   { label: 'Projects', to: '/projects' },
+  { label: 'Activities', to: '/activities' },
   { label: 'Contact', to: '/contact' },
 ]
 

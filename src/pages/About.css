@@ -45,9 +45,8 @@
 }
 
 .about-photo {
-  /* Arch: rounded across the top, near-flat with softened corners at the
-     bottom. */
-  border-radius: 48% 48% 14px 14px / 34% 34% 14px 14px;
+  /* Arch: rounded across the top, sharp square corners at the bottom. */
+  border-radius: 48% 48% 0 0 / 50% 50% 0 0;
   overflow: hidden;
   background: var(--paper-dim);
 }

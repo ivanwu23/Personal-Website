@@ -9,8 +9,10 @@ function App() {
     <>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/projects" element={<Placeholder title="Projects" />} />
         <Route path="/about" element={<About />} />
+        <Route path="/resume" element={<Placeholder title="Resume" />} />
+        <Route path="/projects" element={<Placeholder title="Projects" />} />
+        <Route path="/activities" element={<Placeholder title="Activities" />} />
         <Route path="/contact" element={<Placeholder title="Contact" />} />
       </Routes>
       <ScrollHint />
