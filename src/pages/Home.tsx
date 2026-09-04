@@ -1,9 +1,19 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import NavBar from '../components/NavBar'
 import ContactBar from '../components/ContactBar'
 import Sparkle from '../components/Sparkle'
+import LoadingScreen from '../components/LoadingScreen'
 import { NAME, TAGLINE } from '../data/site'
 import './Home.css'
+
+// How long the loading screen stays up before the landing page shows.
+// Matches the loading-screen fade-out (delay 1.4s + 0.4s) in LoadingScreen.css.
+const LOADING_DURATION = 1800
+
+// The loading screen runs once per page load. Navigating back to Home via
+// the menu bar re-mounts this component, but this module-level flag persists
+// across those re-mounts (only a full page reload resets it).
+let hasShownLoadingScreen = false
 
 // How long the mountain/name entrance takes (seconds) — the nav and
 // contact buttons wait this long before they start animating in.
@@ -18,6 +28,16 @@ const STAR_DRIFT_Y = 16
 export default function Home() {
   const starLeftRef = useRef<HTMLDivElement>(null)
   const starRightRef = useRef<HTMLDivElement>(null)
+  const [loading, setLoading] = useState(!hasShownLoadingScreen)
+
+  useEffect(() => {
+    if (hasShownLoadingScreen) return
+    const timer = window.setTimeout(() => {
+      hasShownLoadingScreen = true
+      setLoading(false)
+    }, LOADING_DURATION)
+    return () => window.clearTimeout(timer)
+  }, [])
 
   useEffect(() => {
     function handlePointerMove(event: PointerEvent) {
@@ -36,6 +56,8 @@ export default function Home() {
     window.addEventListener('pointermove', handlePointerMove)
     return () => window.removeEventListener('pointermove', handlePointerMove)
   }, [])
+
+  if (loading) return <LoadingScreen />
 
   return (
     <section className="home">

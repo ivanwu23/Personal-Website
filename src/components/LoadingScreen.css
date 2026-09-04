@@ -1,0 +1,74 @@
+.loading-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--paper);
+  /* Fades itself out once Home decides loading is done. */
+  animation: loading-screen-out 0.4s ease-out 1.4s both;
+}
+
+.loading-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: clamp(160px, 32vw, 280px);
+}
+
+.loading-bar {
+  display: block;
+  height: 10px;
+  border-radius: 999px;
+  transform: scaleX(0);
+  /* Each bar grows in from the left edge toward the right, then collapses
+     back out to the right — a steady left-to-right sweep. Staggered by
+     animation-delay so the three are always offset from one another. */
+  animation: loading-bar-reveal 1.6s var(--ease-out-expo) infinite;
+}
+
+.loading-bar:nth-child(1) {
+  background: linear-gradient(90deg, #d6d6d6, #efefef);
+  animation-delay: 0s;
+}
+
+.loading-bar:nth-child(2) {
+  background: linear-gradient(90deg, #a8a8a8, #c9c9c9);
+  animation-delay: 0.18s;
+}
+
+.loading-bar:nth-child(3) {
+  background: linear-gradient(90deg, #7a7a7a, #9c9c9c);
+  animation-delay: 0.36s;
+}
+
+@keyframes loading-bar-reveal {
+  0% {
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+  50% {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+  50.01% {
+    transform: scaleX(1);
+    transform-origin: right;
+  }
+  100% {
+    transform: scaleX(0);
+    transform-origin: right;
+  }
+}
+
+@keyframes loading-screen-out {
+  from {
+    opacity: 1;
+    visibility: visible;
+  }
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
