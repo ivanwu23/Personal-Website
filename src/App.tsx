@@ -4,17 +4,53 @@ import About from './pages/About'
 import Resume from './pages/Resume'
 import Placeholder from './pages/Placeholder'
 import ScrollHint from './components/ScrollHint'
+import RequireNavAccess from './components/RequireNavAccess'
 
 function App() {
   return (
     <>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/resume" element={<Resume />} />
-        <Route path="/projects" element={<Placeholder title="Projects" />} />
-        <Route path="/activities" element={<Placeholder title="Activities" />} />
-        <Route path="/contact" element={<Placeholder title="Contact" />} />
+        <Route
+          path="/about"
+          element={
+            <RequireNavAccess>
+              <About />
+            </RequireNavAccess>
+          }
+        />
+        <Route
+          path="/resume"
+          element={
+            <RequireNavAccess>
+              <Resume />
+            </RequireNavAccess>
+          }
+        />
+        <Route
+          path="/projects"
+          element={
+            <RequireNavAccess>
+              <Placeholder title="Projects" />
+            </RequireNavAccess>
+          }
+        />
+        <Route
+          path="/activities"
+          element={
+            <RequireNavAccess>
+              <Placeholder title="Activities" />
+            </RequireNavAccess>
+          }
+        />
+        <Route
+          path="/contact"
+          element={
+            <RequireNavAccess>
+              <Placeholder title="Contact" />
+            </RequireNavAccess>
+          }
+        />
       </Routes>
       <ScrollHint />
     </>
