@@ -56,24 +56,52 @@
   min-height: 0;
   list-style: none;
   margin: 0;
-  padding: 4px 20px 20px 4px;
+  padding: 4px 20px 24px 4px;
   overflow-y: auto;
   scrollbar-gutter: stable;
   display: flex;
   flex-direction: column;
   gap: 14px;
+  /* Scrolling always comes to rest on a whole bubble, never mid-pill. */
+  scroll-snap-type: y mandatory;
+  scroll-padding-block: 4px;
+  /* Scrolled-past bubbles fade out at the edges instead of being sliced
+     flat by the container's bounds. */
+  mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    black 24px,
+    black calc(100% - 24px),
+    transparent
+  );
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    black 24px,
+    black calc(100% - 24px),
+    transparent
+  );
 }
 
 .resume-row {
   display: flex;
   justify-content: flex-end;
   padding-right: var(--row-offset, 0%);
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
 }
 
 .resume-bubble {
+  position: relative;
   display: inline-flex;
   align-items: center;
+  justify-content: space-between;
   gap: clamp(16px, 4vw, 32px);
+  /* Spans from the experience's start year to its end year on the
+     timeline — grows wider than its text needs when the date range is
+     long, and never shrinks smaller than the text needs when it's short. */
+  width: var(--row-width, auto);
+  min-width: fit-content;
   max-width: 100%;
   padding: 14px 24px;
   border-radius: 999px;
@@ -115,6 +143,82 @@
   color: var(--ink);
   opacity: 0.75;
   white-space: nowrap;
+}
+
+/* ---- Entrance animation (plays once per page load) ---- */
+
+.resume--intro .resume-head {
+  opacity: 0;
+  animation: resume-rise 0.7s var(--ease-out-expo) both;
+  animation-delay: 0.05s;
+}
+
+@keyframes resume-rise {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* A solid cover, shaped exactly like the pill, slides off to the right
+   to reveal the bubble underneath. Built with `transform` rather than
+   an animated `clip-path` — Chromium doesn't reliably animate
+   `clip-path: inset(... round ...)`, so that approach played fine in
+   Safari but silently no-opped in Chrome.
+
+   The cover lives on ::after of this dedicated mask layer (not on
+   .resume-bubble itself) so its own overflow: hidden can clip the
+   cover to the pill's silhouette — without clipping the parent
+   .resume-bubble's box-shadow, which needs to stay unclipped. Without
+   this, a bubble with blank space to its right in its row (any bubble
+   that doesn't end in the current year) would show the cover sliding
+   past the real content and hanging visibly in that empty space. */
+.resume-bubble-cover-mask {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.resume--intro .resume-bubble-cover-mask::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--paper);
+  animation: resume-bubble-cover-slide 0.6s var(--ease-out-expo) both;
+  animation-delay: var(--reveal-delay, 0s);
+}
+
+@keyframes resume-bubble-cover-slide {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+/* The shadow lives on .resume-bubble itself (so it's never clipped —
+   see the box-shadow fix above), which means it isn't hidden by the
+   cover sliding on top of it. Fade it in on the same timing so it
+   doesn't show up under a still-hidden bubble. */
+.resume--intro .resume-bubble {
+  animation: resume-bubble-shadow-in 0.6s var(--ease-out-expo) both;
+  animation-delay: var(--reveal-delay, 0s);
+}
+
+@keyframes resume-bubble-shadow-in {
+  from {
+    box-shadow: 0 4px 1px rgba(0, 0, 0, 0);
+  }
+  to {
+    box-shadow: 0 4px 1px rgba(0, 0, 0, 0.16);
+  }
 }
 
 /* ---- Timeline bar ---- */

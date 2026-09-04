@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import NavBar from '../components/NavBar'
 import ContactBar from '../components/ContactBar'
 import { EXPERIENCES, TIMELINE_START_YEAR } from '../data/site'
@@ -10,7 +10,16 @@ function shortYear(year: number): string {
   return String(year).slice(2)
 }
 
+// The entrance animation runs once per full page load, same as About's.
+let hasIntroPlayed = false
+
 export default function Resume() {
+  const [playIntro] = useState(() => !hasIntroPlayed)
+
+  useEffect(() => {
+    hasIntroPlayed = true
+  }, [])
+
   const currentYear = new Date().getFullYear()
   const timelineEnd = Math.max(currentYear, TIMELINE_START_YEAR + 1)
   const span = timelineEnd - TIMELINE_START_YEAR
@@ -37,7 +46,7 @@ export default function Resume() {
       <NavBar />
       <ContactBar />
 
-      <section className="resume">
+      <section className={playIntro ? 'resume resume--intro' : 'resume'}>
         <header className="resume-head">
           <p className="resume-eyebrow">Resume</p>
           <h1 className="resume-title">My Experiences</h1>
@@ -45,15 +54,30 @@ export default function Resume() {
 
         <div className="resume-timeline-wrap">
           <ul className="resume-bubbles">
-            {EXPERIENCES.map((exp) => {
+            {EXPERIENCES.map((exp, i) => {
               const endValue = exp.endYear === 'current' ? currentYear : exp.endYear
-              const fraction = Math.min(
+              // Where the experience's start and end years fall along the
+              // 2020 -> current-year timeline, as fractions of its span.
+              const startFraction = Math.min(
+                1,
+                Math.max(0, (exp.startYear - TIMELINE_START_YEAR) / span),
+              )
+              const endFraction = Math.min(
                 1,
                 Math.max(0, (endValue - TIMELINE_START_YEAR) / span),
               )
               const rowStyle = {
-                '--row-offset': `${(1 - fraction) * 100}%`,
+                '--row-offset': `${(1 - endFraction) * 100}%`,
+                '--row-width': `${(endFraction - startFraction) * 100}%`,
               } as CSSProperties
+              // Set as a CSS custom property (rather than animationDelay
+              // directly) because the reveal animation lives on ::after,
+              // which inline styles can't target.
+              const bubbleStyle = playIntro
+                ? ({ '--reveal-delay': `${0.25 + i * 0.09}s` } as CSSProperties)
+                : undefined
+              // 21-25 reads as 2021-2025: two-digit start year, two-digit
+              // end year (or "~" while still ongoing).
               const dateLabel =
                 exp.endYear === 'current'
                   ? `${shortYear(exp.startYear)}~`
@@ -61,12 +85,16 @@ export default function Resume() {
 
               return (
                 <li key={exp.title} className="resume-row" style={rowStyle}>
-                  <div className="resume-bubble">
+                  <div className="resume-bubble" style={bubbleStyle}>
                     <div className="resume-bubble-text">
                       <p className="resume-bubble-title">{exp.title}</p>
                       <p className="resume-bubble-sub">{exp.subtitle}</p>
                     </div>
                     <p className="resume-bubble-date">{dateLabel}</p>
+                    {/* Clips the sliding reveal cover to the bubble's own
+                        rounded silhouette, without clipping the parent's
+                        box-shadow (which needs to stay unclipped). */}
+                    <div className="resume-bubble-cover-mask" aria-hidden="true" />
                   </div>
                 </li>
               )
