@@ -5,11 +5,16 @@ import './NavBar.css'
 type NavBarProps = {
   /** Seconds to wait before fading in — lets the hero animation finish first. */
   delay?: number
+  /** Play the entrance animation. Only Home's first view opts in. */
+  animate?: boolean
 }
 
-export default function NavBar({ delay = 0 }: NavBarProps) {
+export default function NavBar({ delay = 0, animate = false }: NavBarProps) {
   return (
-    <nav className="navbar" style={{ animationDelay: `${delay}s` }}>
+    <nav
+      className={animate ? 'navbar is-entering' : 'navbar'}
+      style={animate ? { animationDelay: `${delay}s` } : undefined}
+    >
       <ul className="navbar-links">
         {NAV_LINKS.map((link) => (
           <li key={link.to}>

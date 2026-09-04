@@ -13,6 +13,9 @@
   bottom: 0;
   height: var(--mountain-h);
   min-height: 800px;
+}
+
+.home--intro .home-mountain {
   animation: mountain-slide-up 1.05s var(--ease-out-expo) both;
 }
 
@@ -39,13 +42,16 @@
   width: clamp(32px, 4.4vw, 52px);
   height: clamp(32px, 4.4vw, 52px);
   color: #b5b5b5;
-  opacity: 0;
+  opacity: 0.7;
   pointer-events: none;
-  /* Only opacity is animated here — the drift itself is driven by JS
-     setting transform directly, so the two never fight over the
-     property during the fade-in. */
-  animation: star-fade-in 0.6s ease-out 1.05s both;
   transition: transform 0.35s ease-out;
+}
+
+/* Only opacity is animated here — the drift itself is driven by JS setting
+   transform directly, so the two never fight over the property during the
+   fade-in. */
+.home--intro .home-star {
+  animation: star-fade-in 0.6s ease-out 1.05s both;
 }
 
 .home-star svg {
@@ -69,7 +75,7 @@
     opacity: 0;
   }
   to {
-    opacity: 1;
+    opacity: 0.7;
   }
 }
 
@@ -96,6 +102,9 @@
      type — a hard offset, not a soft drop shadow. */
   text-shadow: 0 8px 0 #a3a3a3;
   margin: 0;
+}
+
+.home--intro .home-name {
   animation: name-slide-down 1.05s var(--ease-out-expo) both;
 }
 
@@ -116,8 +125,11 @@
   font-weight: 500;
   letter-spacing: 0.02em;
   color: var(--ink);
-  opacity: 0;
+  opacity: 0.65;
   margin: 20px 0 0;
+}
+
+.home--intro .home-tagline {
   animation: tagline-fade-in 0.5s var(--ease-out-expo) 0.9s both;
 }
 

@@ -21,5 +21,5 @@ export const CONTACT_LINKS: ContactLink[] = [
   { label: 'LinkedIn', href: 'https://linkedin.com/in/ivanwu23', icon: '/linkedin.png' },
   { label: 'GitHub', href: 'https://github.com/ivanwu23', icon: '/github.png' },
   { label: 'Email', href: 'mailto:ivanwu1061@gmail.com', icon: '/email.png' },
-  { label: 'Phone', href: 'tel:+1 (347)-425-5405', icon: '/phone-call.png' },
+  { label: 'Phone', href: 'tel:+1 (347)425-5405', icon: '/phone-call.png' },
 ]

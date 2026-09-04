@@ -4,6 +4,8 @@ import './ContactBar.css'
 type ContactBarProps = {
   /** Seconds to wait before the first button starts sliding in. */
   delay?: number
+  /** Play the entrance animation. Only Home's first view opts in. */
+  animate?: boolean
 }
 
 // Turns an href into the plain-text value it points to, so hovering a
@@ -15,7 +17,7 @@ function displayValue(href: string): string {
   return href.replace(/^https?:\/\//, '').replace(/\/$/, '')
 }
 
-export default function ContactBar({ delay = 0 }: ContactBarProps) {
+export default function ContactBar({ delay = 0, animate = false }: ContactBarProps) {
   return (
     <div className="contact-bar">
       {CONTACT_LINKS.map((link, i) => {
@@ -23,12 +25,12 @@ export default function ContactBar({ delay = 0 }: ContactBarProps) {
         return (
           <a
             key={link.label}
-            className="contact-button"
+            className={animate ? 'contact-button is-entering' : 'contact-button'}
             href={link.href}
             target={external ? '_blank' : undefined}
             rel={external ? 'noreferrer' : undefined}
             aria-label={link.label}
-            style={{ animationDelay: `${delay + i * 0.07}s` }}
+            style={animate ? { animationDelay: `${delay + i * 0.07}s` } : undefined}
           >
             <span className="contact-label" aria-hidden="true">
               {displayValue(link.href)}

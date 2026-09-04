@@ -16,12 +16,15 @@
   justify-content: center;
   width: 44px;
   height: 44px;
-  opacity: 0;
-  transform: translateX(60px);
-  animation: contact-slide-in 0.6s var(--ease-out-expo) both;
   transition:
     opacity 0.25s,
     transform 0.25s;
+}
+
+.contact-button.is-entering {
+  opacity: 0;
+  transform: translateX(60px);
+  animation: contact-slide-in 0.6s var(--ease-out-expo) both;
 }
 
 .contact-button:hover,
@@ -90,6 +93,9 @@
   .contact-button {
     width: 40px;
     height: 40px;
+  }
+
+  .contact-button.is-entering {
     transform: translateY(60px);
     animation-name: contact-slide-in-mobile;
   }

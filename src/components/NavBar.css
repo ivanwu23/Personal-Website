@@ -11,6 +11,9 @@
   background: var(--paper-dim);
   border: 1px solid var(--line);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.navbar.is-entering {
   opacity: 0;
   animation: navbar-fade-in 0.7s var(--ease-out-expo) both;
 }

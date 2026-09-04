@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import NavBar from '../components/NavBar'
 import ContactBar from '../components/ContactBar'
 import Sparkle from '../components/Sparkle'
+import ShootingStars from '../components/ShootingStars'
 import LoadingScreen from '../components/LoadingScreen'
 import { NAME, TAGLINE } from '../data/site'
 import './Home.css'
@@ -10,10 +11,12 @@ import './Home.css'
 // Matches the loading-screen fade-out (delay 1.4s + 0.4s) in LoadingScreen.css.
 const LOADING_DURATION = 1800
 
-// The loading screen runs once per page load. Navigating back to Home via
-// the menu bar re-mounts this component, but this module-level flag persists
-// across those re-mounts (only a full page reload resets it).
+// The loading screen and the entrance animations each run once per page
+// load. Navigating back to Home via the menu bar re-mounts this component,
+// but these module-level flags persist across those re-mounts (only a full
+// page reload resets them).
 let hasShownLoadingScreen = false
+let hasIntroPlayed = false
 
 // How long the mountain/name entrance takes (seconds) — the nav and
 // contact buttons wait this long before they start animating in.
@@ -29,6 +32,9 @@ export default function Home() {
   const starLeftRef = useRef<HTMLDivElement>(null)
   const starRightRef = useRef<HTMLDivElement>(null)
   const [loading, setLoading] = useState(!hasShownLoadingScreen)
+  // Whether this mount should play the entrance animations. Captured once so
+  // it can't flip mid-render; true only the first time the page is shown.
+  const [playIntro] = useState(() => !hasIntroPlayed)
 
   useEffect(() => {
     if (hasShownLoadingScreen) return
@@ -38,6 +44,10 @@ export default function Home() {
     }, LOADING_DURATION)
     return () => window.clearTimeout(timer)
   }, [])
+
+  useEffect(() => {
+    if (!loading) hasIntroPlayed = true
+  }, [loading])
 
   useEffect(() => {
     function handlePointerMove(event: PointerEvent) {
@@ -60,10 +70,12 @@ export default function Home() {
   if (loading) return <LoadingScreen />
 
   return (
-    <section className="home">
+    <section className={playIntro ? 'home home--intro' : 'home'}>
       <div className="home-mountain" aria-hidden="true">
         <img src="/mountain.png" alt="" className="home-mountain-img" />
       </div>
+
+      <ShootingStars />
 
       <div ref={starLeftRef} className="home-star home-star-left" aria-hidden="true">
         <Sparkle />
@@ -77,8 +89,8 @@ export default function Home() {
         <p className="home-tagline">{TAGLINE}</p>
       </div>
 
-      <NavBar delay={INTRO_DURATION} />
-      <ContactBar delay={INTRO_DURATION} />
+      <NavBar delay={INTRO_DURATION} animate={playIntro} />
+      <ContactBar delay={INTRO_DURATION} animate={playIntro} />
     </section>
   )
 }

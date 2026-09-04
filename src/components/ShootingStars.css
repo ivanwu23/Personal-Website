@@ -1,0 +1,55 @@
+.shooting-stars {
+  position: absolute;
+  inset: 0;
+  /* Sits in the sky: above the mountain, below the name and sparkles. */
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.shooting-star {
+  position: absolute;
+  width: clamp(90px, 12vw, 170px);
+  height: 2px;
+  border-radius: 999px;
+  /* Faint tail trailing behind a brighter head (see ::after). */
+  background: linear-gradient(
+    90deg,
+    rgba(140, 140, 140, 0) 0%,
+    rgba(140, 140, 140, 0.55) 70%,
+    rgba(120, 120, 120, 0.75) 100%
+  );
+  animation: shooting-star-move linear forwards;
+}
+
+.shooting-star::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 50%;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(90, 90, 90, 0.9);
+  transform: translateY(-50%);
+  box-shadow: 0 0 6px 1px rgba(130, 130, 130, 0.45);
+}
+
+/* translateX runs along the rotated axis, so one value carries the streak
+   top-left to bottom-right at the given slight downward angle. */
+@keyframes shooting-star-move {
+  0% {
+    transform: rotate(var(--angle, 15deg)) translateX(-45vw);
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.5;
+  }
+  85% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: rotate(var(--angle, 15deg)) translateX(65vw);
+    opacity: 0;
+  }
+}
