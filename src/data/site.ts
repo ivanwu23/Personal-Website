@@ -30,6 +30,27 @@ export const NAV_LINKS = [
   { label: 'Contact', to: '/contact' },
 ]
 
+export type Experience = {
+  title: string
+  subtitle: string
+  startYear: number
+  /** A year, or 'current' for experiences still ongoing. */
+  endYear: number | 'current'
+}
+
+// Shown as bubbles on the Resume timeline, most recent first.
+export const EXPERIENCES: Experience[] = [
+  { title: 'Match-A-Room', subtitle: 'Developer', startYear: 2024, endYear: 2026 },
+  { title: 'HeatSeek', subtitle: 'Developer', startYear: 2024, endYear: 2026 },
+  { title: 'Alpha Kappa Psi', subtitle: 'Beta Iota', startYear: 2024, endYear: 'current' },
+  { title: 'Multi-Media Database', subtitle: 'Developer', startYear: 2023, endYear: 2025 },
+  { title: 'Teaching Assistant', subtitle: 'CPC Brooklyn', startYear: 2021, endYear: 2025 },
+]
+
+// The timeline bar on the Resume page always starts here and runs through
+// the current year, so it never needs manual updates.
+export const TIMELINE_START_YEAR = 2020
+
 export type ContactLink = {
   label: string
   href: string

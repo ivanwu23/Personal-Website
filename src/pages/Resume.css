@@ -1,0 +1,201 @@
+.resume {
+  /* Fills the viewport exactly and never scrolls itself — only the
+     bubble list inside .resume-timeline-wrap scrolls. */
+  height: 100svh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 1040px;
+  margin: 0 auto;
+  /* Top padding matches .about's so both pages' titles align exactly. */
+  padding: 140px 24px 32px;
+  background: var(--paper);
+}
+
+/* ---- Heading ---- */
+
+.resume-head {
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.resume-eyebrow {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink);
+  opacity: 0.7;
+}
+
+.resume-title {
+  margin: 12px 0 0;
+  font-family: var(--font-name);
+  font-weight: 600;
+  font-size: clamp(40px, 7vw, 84px);
+  line-height: 0.95;
+  letter-spacing: 0.01em;
+  color: var(--ink);
+}
+
+/* ---- Bubbles + timeline ---- */
+
+.resume-timeline-wrap {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  margin-top: clamp(24px, 5vh, 56px);
+}
+
+.resume-bubbles {
+  flex: 1;
+  min-height: 0;
+  list-style: none;
+  margin: 0;
+  padding: 4px 4px 20px;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.resume-row {
+  display: flex;
+  justify-content: flex-end;
+  padding-right: var(--row-offset, 0%);
+}
+
+.resume-bubble {
+  display: inline-flex;
+  align-items: center;
+  gap: clamp(16px, 4vw, 32px);
+  max-width: 100%;
+  padding: 14px 24px;
+  border-radius: 999px;
+  background: var(--paper-dim);
+}
+
+.resume-bubble-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.resume-bubble-title {
+  margin: 0;
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 17px;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.resume-bubble-sub {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--ink);
+  opacity: 0.6;
+  white-space: nowrap;
+}
+
+.resume-bubble-date {
+  flex-shrink: 0;
+  margin: 0;
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--ink);
+  opacity: 0.75;
+  white-space: nowrap;
+}
+
+/* ---- Timeline bar ---- */
+
+.resume-timeline {
+  flex-shrink: 0;
+  border-top: 1px solid var(--line);
+  padding-top: 28px;
+}
+
+.resume-timeline-track {
+  position: relative;
+  height: 34px;
+  margin: 0 2px;
+}
+
+.resume-tick {
+  position: absolute;
+  top: 0;
+  width: 1px;
+  height: 8px;
+  background: var(--line);
+  transform: translateX(-50%);
+}
+
+.resume-timeline-year {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+}
+
+.resume-timeline-year--first {
+  transform: translateX(0);
+}
+
+.resume-timeline-year--last {
+  transform: translateX(-100%);
+}
+
+.resume-timeline-year .resume-tick {
+  position: static;
+  display: block;
+  margin: 0 auto;
+  transform: none;
+  height: 14px;
+  background: var(--ink);
+  opacity: 0.55;
+}
+
+.resume-timeline-label {
+  display: block;
+  margin-top: 6px;
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+  opacity: 0.6;
+  white-space: nowrap;
+}
+
+/* ---- Responsive ---- */
+
+@media (max-width: 640px) {
+  .resume {
+    /* The mobile ContactBar becomes a fixed row along the bottom edge —
+       leave room so it never overlaps the timeline. */
+    padding: 120px 20px 88px;
+  }
+
+  .resume-row {
+    padding-right: 0;
+  }
+
+  .resume-bubble {
+    width: 100%;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .resume-bubble-title,
+  .resume-bubble-sub {
+    white-space: normal;
+  }
+}
