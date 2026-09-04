@@ -1,0 +1,42 @@
+.scroll-hint {
+  position: fixed;
+  left: 50%;
+  bottom: clamp(20px, 4vw, 32px);
+  transform: translateX(-50%);
+  z-index: 30;
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity 0.5s ease;
+  animation: scroll-hint-bounce 1.4s ease-in-out infinite;
+}
+
+.scroll-hint.is-hidden {
+  opacity: 0;
+}
+
+.scroll-hint-arrow {
+  display: block;
+  width: 0;
+  height: 0;
+  border-left: 9px solid transparent;
+  border-right: 9px solid transparent;
+  border-top: 12px solid var(--ink);
+  opacity: 0.3;
+}
+
+@keyframes scroll-hint-bounce {
+  0%,
+  100% {
+    transform: translateX(-50%) translateY(0);
+  }
+  50% {
+    transform: translateX(-50%) translateY(8px);
+  }
+}
+
+/* Clears the contact bar, which drops to a centered bottom row here. */
+@media (max-width: 640px) {
+  .scroll-hint {
+    bottom: 84px;
+  }
+}
