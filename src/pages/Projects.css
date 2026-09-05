@@ -1,0 +1,430 @@
+.projects {
+  /* Fills the viewport exactly and never scrolls — the carousel image's
+     max-height (below) keeps its content from ever needing more room
+     than a typical viewport can spare. */
+  height: 100svh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 1040px;
+  margin: 0 auto;
+  /* Top padding matches .about's/.resume's so titles align across pages. */
+  padding: 140px 24px 32px;
+  background: var(--paper);
+  text-align: center;
+}
+
+/* ---- Heading ---- */
+
+.projects-head {
+  flex-shrink: 0;
+}
+
+.projects-eyebrow {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink);
+  opacity: 0.7;
+}
+
+.projects-title {
+  margin: 12px 0 0;
+  font-family: var(--font-name);
+  font-weight: 600;
+  font-size: clamp(36px, 6vw, 72px);
+  line-height: 1.05;
+  letter-spacing: 0.01em;
+  color: var(--ink);
+}
+
+.projects-subtitle {
+  margin: 8px 0 0;
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink);
+  opacity: 0.5;
+}
+
+/* Only applied once the user has actually navigated the carousel during
+   this mount — never on first mount, and never on a remount after
+   navigating away and back (see Projects.tsx's swapAnimEnabled). */
+.projects-title.is-swapping,
+.projects-subtitle.is-swapping {
+  animation: projects-text-swap 0.35s var(--ease-out-expo) both;
+}
+
+@keyframes projects-text-swap {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ---- Carousel ---- */
+
+.projects-carousel {
+  --slide-w: min(560px, 62vw);
+  --slide-gap: clamp(20px, 4vw, 40px);
+  position: relative;
+  flex-shrink: 0;
+  margin-top: clamp(24px, 5vh, 56px);
+}
+
+.projects-track {
+  display: flex;
+  align-items: center;
+  gap: var(--slide-gap);
+  padding-inline: calc((100% - var(--slide-w)) / 2);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  cursor: grab;
+  outline: none;
+  /* Slides fade to transparent at the carousel's own edges instead of
+     being sliced off by the scroll clip. */
+  mask-image: linear-gradient(to right, transparent, black 80px, black calc(100% - 80px), transparent);
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 80px,
+    black calc(100% - 80px),
+    transparent
+  );
+}
+
+.projects-track::-webkit-scrollbar {
+  display: none;
+}
+
+.projects-track.is-dragging {
+  cursor: grabbing;
+  scroll-snap-type: none;
+}
+
+.projects-slide {
+  position: relative;
+  flex: 0 0 auto;
+  width: var(--slide-w);
+  overflow: hidden;
+  scroll-snap-align: center;
+  opacity: 0.35;
+  transform: scale(0.94);
+  cursor: pointer;
+  transition:
+    opacity 0.4s var(--ease-out-expo),
+    transform 0.4s var(--ease-out-expo);
+}
+
+.projects-slide.is-active {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* During the invisible loop-wrap jump, "is-active" lands on a different
+   (but visually identical) DOM element — suppress the transition so it
+   snaps straight to its final state instead of replaying the opacity/
+   scale animation from the dimmed peek look, which would flash/bounce
+   for a jump that's supposed to be imperceptible. */
+.projects-track.is-repositioning .projects-slide {
+  transition: none;
+}
+
+.projects-slide img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  /* Caps how tall the carousel can ever get, so the page always fits the
+     viewport regardless of window height — comfortably above the image's
+     natural rendered height at typical viewport sizes, only actually
+     kicking in on short windows. */
+  max-height: 44vh;
+  margin: 0 auto;
+  -webkit-user-drag: none;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* A soft blur over the outer (far-from-center) edge of each peeking
+   slide — the side actually receding out of view — fading to clear
+   toward the middle, so the peek looks like it's dissolving off-screen
+   rather than getting sliced by a hard edge. */
+.projects-slide-edge {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 42%;
+  pointer-events: none;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+
+.is-peek-left .projects-slide-edge {
+  left: 0;
+  mask-image: linear-gradient(to right, black, transparent);
+  -webkit-mask-image: linear-gradient(to right, black, transparent);
+}
+
+.is-peek-right .projects-slide-edge {
+  right: 0;
+  mask-image: linear-gradient(to left, black, transparent);
+  -webkit-mask-image: linear-gradient(to left, black, transparent);
+}
+
+.projects-arrow {
+  position: absolute;
+  top: 50%;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-family: var(--sans);
+  font-size: 40px;
+  font-weight: 300;
+  line-height: 1;
+  color: var(--ink);
+  opacity: 0.55;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.projects-arrow:hover {
+  opacity: 1;
+}
+
+/* Sit in the gap between the active slide and the peek beside it, rather
+   than out at the carousel's outer edge. */
+.projects-arrow--prev {
+  left: calc(50% - var(--slide-w) / 2 - var(--slide-gap) / 2);
+  transform: translate(-50%, -50%);
+}
+
+.projects-arrow--next {
+  left: calc(50% + var(--slide-w) / 2 + var(--slide-gap) / 2);
+  transform: translate(-50%, -50%);
+}
+
+/* ---- Dots ---- */
+
+.projects-dots {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: clamp(16px, 3vh, 32px);
+}
+
+.projects-dot {
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--line);
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    transform 0.2s;
+}
+
+.projects-dot:hover {
+  background: var(--ink);
+  opacity: 0.6;
+}
+
+.projects-dot.is-active {
+  background: var(--ink);
+  transform: scale(1.3);
+}
+
+/* ---- Entrance animation (plays once per page load) ---- */
+
+.projects--intro .projects-head,
+.projects--intro .projects-carousel,
+.projects--intro .projects-dots {
+  opacity: 0;
+  animation: projects-rise 0.7s var(--ease-out-expo) both;
+}
+
+.projects--intro .projects-head {
+  animation-delay: 0.05s;
+}
+
+.projects--intro .projects-carousel {
+  animation-delay: 0.2s;
+}
+
+.projects--intro .projects-dots {
+  animation-delay: 0.32s;
+}
+
+@keyframes projects-rise {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ---- Project popup ---- */
+
+.project-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  animation: project-modal-fade-in 0.25s var(--ease-out-expo) both;
+}
+
+@keyframes project-modal-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.project-modal {
+  position: relative;
+  width: min(560px, 100%);
+  max-height: 86vh;
+  overflow-y: auto;
+  background: var(--paper);
+  border-radius: 20px;
+  padding: 32px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25);
+  text-align: left;
+  outline: none;
+  animation: project-modal-rise 0.3s var(--ease-out-expo) both;
+}
+
+@keyframes project-modal-rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.project-modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 50%;
+  background: var(--paper-dim);
+  color: var(--ink);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    transform 0.2s;
+}
+
+.project-modal-close:hover {
+  background: var(--line);
+  transform: scale(1.06);
+}
+
+.project-modal-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.project-modal-title {
+  margin: 0;
+  font-family: var(--font-name);
+  font-weight: 600;
+  font-size: clamp(24px, 4vw, 32px);
+  color: var(--ink);
+}
+
+.project-modal-subtitle {
+  margin: 6px 0 0;
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink);
+  opacity: 0.5;
+}
+
+.project-modal-description {
+  margin: 18px 0 0;
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--ink);
+  opacity: 0.85;
+}
+
+/* ---- Responsive ---- */
+
+@media (max-width: 640px) {
+  .projects {
+    /* The mobile ContactBar becomes a fixed row along the bottom edge —
+       leave room so it never overlaps the dots. */
+    padding: 120px 20px 88px;
+  }
+
+  .projects-carousel {
+    --slide-w: min(320px, 80vw);
+    --slide-gap: 16px;
+  }
+
+  .projects-arrow {
+    width: 36px;
+    height: 36px;
+    font-size: 32px;
+  }
+
+  .project-modal-backdrop {
+    padding: 16px;
+  }
+
+  .project-modal {
+    padding: 24px;
+    border-radius: 16px;
+  }
+}

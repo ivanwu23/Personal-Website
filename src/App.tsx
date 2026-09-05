@@ -2,6 +2,7 @@ import { Route, Routes } from 'react-router-dom'
 import Home from './pages/Home'
 import About from './pages/About'
 import Resume from './pages/Resume'
+import Projects from './pages/Projects'
 import Placeholder from './pages/Placeholder'
 import ScrollHint from './components/ScrollHint'
 import RequireNavAccess from './components/RequireNavAccess'
@@ -31,7 +32,7 @@ function App() {
           path="/projects"
           element={
             <RequireNavAccess>
-              <Placeholder title="Projects" />
+              <Projects />
             </RequireNavAccess>
           }
         />

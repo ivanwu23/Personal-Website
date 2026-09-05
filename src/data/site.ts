@@ -51,6 +51,41 @@ export const EXPERIENCES: Experience[] = [
 // the current year, so it never needs manual updates.
 export const TIMELINE_START_YEAR = 2020
 
+export type Project = {
+  title: string
+  subtitle: string
+  image: string
+  description: string
+}
+
+// Shown in the carousel on the Projects page, left to right. Clicking the
+// centered project opens a popup with its description.
+//
+// TODO: the descriptions below are placeholders — swap in the real copy.
+export const PROJECTS: Project[] = [
+  {
+    title: 'Personal Website',
+    subtitle: 'Creator • UI / Dev',
+    image: '/PJ1.png',
+    description:
+      'A personal portfolio site built to showcase my work and background, with a focus on clean typography, smooth page transitions, and thoughtful micro-interactions throughout.',
+  },
+  {
+    title: 'Multi-Media Database',
+    subtitle: 'School Project • Dev',
+    image: '/PJ2.png',
+    description:
+      'A school project exploring graph algorithms and data modeling — a searchable movie and media database with a custom ratings and recommendation system.',
+  },
+  {
+    title: 'MatchARoom',
+    subtitle: 'Creator • Full-Stack',
+    image: '/PJ3.png',
+    description:
+      'A full-stack roommate-matching platform where users can post listings, browse rooms, and connect with potential roommates through a community-style feed.',
+  },
+]
+
 export type ContactLink = {
   label: string
   href: string
