@@ -33,7 +33,7 @@ export default function ContactBar({ delay = 0, animate = false }: ContactBarPro
             style={animate ? { animationDelay: `${delay + i * 0.07}s` } : undefined}
           >
             <span className="contact-label" aria-hidden="true">
-              {displayValue(link.href)}
+              {link.displayText ?? displayValue(link.href)}
             </span>
             <img className="contact-icon" src={link.icon} alt="" />
           </a>

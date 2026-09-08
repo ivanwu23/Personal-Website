@@ -2,7 +2,7 @@
 // should need to change when you update these.
 
 export const NAME = 'IVAN WU'
-export const TAGLINE = 'Front End Developer'
+export const TAGLINE = 'Developer • Designer'
 
 export const FULL_NAME = 'Ivan Wu'
 export const EMAIL = 'ivanwu1061@gmail.com'
@@ -10,15 +10,15 @@ export const EMAIL = 'ivanwu1061@gmail.com'
 export const ABOUT_HEADSHOT = '/headshot.png'
 
 export const ABOUT_PROFILE =
-  'I’m a Computer Science major at UB with a background in architecture and design. ' +
+  'I’m a Computer Science major at UB with a background in architecture and graphic design. ' +
   'I create innovative, user-centered software solutions by combining technical skill ' +
   'with creativity. Open to opportunities in software engineering and product development. ' +
   EMAIL
 
 // Skills shown by the interactive tab on the About page.
 export const SKILLS = {
-  Languages: ['Java', 'C Programming', 'JavaScript', 'Python', 'CSS', 'HTML'],
-  Frameworks: ['React', 'Node.js', 'Express', 'Vite', 'Tailwind CSS', 'Bootstrap'],
+  Languages: ['Java', 'C Programming', 'TypeScript', 'Python', 'CSS', 'HTML'],
+  Frameworks: ['React', 'Node.js', 'Express', 'Vite', 'Tailwind CSS', 'Figma'],
 } as const
 
 export const NAV_LINKS = [
@@ -26,7 +26,6 @@ export const NAV_LINKS = [
   { label: 'About', to: '/about' },
   { label: 'Resume', to: '/resume' },
   { label: 'Projects', to: '/projects' },
-  { label: 'Activities', to: '/activities' },
   { label: 'Contact', to: '/contact' },
 ]
 
@@ -40,11 +39,12 @@ export type Experience = {
 
 // Shown as bubbles on the Resume timeline, most recent first.
 export const EXPERIENCES: Experience[] = [
+  { title: 'UB Forge', subtitle: 'Marketing Director', startYear: 2025, endYear: 2026 },
   { title: 'Match-A-Room', subtitle: 'Developer', startYear: 2024, endYear: 2026 },
   { title: 'HeatSeek', subtitle: 'Developer', startYear: 2024, endYear: 2026 },
-  { title: 'Alpha Kappa Psi', subtitle: 'Beta Iota', startYear: 2024, endYear: 'current' },
+  { title: 'Alpha Kappa Psi', subtitle: 'Beta Iota Member', startYear: 2024, endYear: 'current' },
   { title: 'Multi-Media Database', subtitle: 'Developer', startYear: 2023, endYear: 2025 },
-  { title: 'Teaching Assistant', subtitle: 'CPC Brooklyn', startYear: 2021, endYear: 2025 },
+  { title: 'CPC Brooklyn', subtitle: 'Teaching Assistant', startYear: 2021, endYear: 2025 },
 ]
 
 // The timeline bar on the Resume page always starts here and runs through
@@ -90,11 +90,19 @@ export type ContactLink = {
   label: string
   href: string
   icon: string
+  /** Text shown on hover — falls back to the href itself when omitted. */
+  displayText?: string
 }
 
 export const CONTACT_LINKS: ContactLink[] = [
   { label: 'LinkedIn', href: 'https://linkedin.com/in/ivanwu23', icon: '/linkedin.png' },
   { label: 'GitHub', href: 'https://github.com/ivanwu23', icon: '/github.png' },
   { label: 'Email', href: 'mailto:ivanwu1061@gmail.com', icon: '/email.png' },
-  { label: 'Phone', href: 'tel:+1 (347)425-5405', icon: '/phone-call.png' },
+  { label: 'Phone', href: 'tel:+1 (347) 425-5405', icon: '/phone-call.png' },
+  {
+    label: 'Resume',
+    href: 'https://drive.google.com/file/d/1MjsfaldPtZgiWjEuWBHdGtGabl3fkTVR/view?usp=drive_link',
+    icon: '/form.png',
+    displayText: 'Resume',
+  },
 ]

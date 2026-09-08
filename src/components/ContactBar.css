@@ -88,6 +88,7 @@
     bottom: 18px;
     transform: translateX(-50%);
     flex-direction: row;
+    gap: 24px;
   }
 
   .contact-button {

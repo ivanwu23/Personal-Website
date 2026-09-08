@@ -1,4 +1,4 @@
-import { Route, Routes } from 'react-router-dom'
+import { Navigate, Route, Routes } from 'react-router-dom'
 import Home from './pages/Home'
 import About from './pages/About'
 import Resume from './pages/Resume'
@@ -37,14 +37,6 @@ function App() {
           }
         />
         <Route
-          path="/activities"
-          element={
-            <RequireNavAccess>
-              <Placeholder title="Activities" />
-            </RequireNavAccess>
-          }
-        />
-        <Route
           path="/contact"
           element={
             <RequireNavAccess>
@@ -52,6 +44,7 @@ function App() {
             </RequireNavAccess>
           }
         />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       <ScrollHint />
     </>
