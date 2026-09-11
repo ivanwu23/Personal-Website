@@ -11,12 +11,34 @@ import './Home.css'
 // Matches the loading-screen fade-out (delay 1.4s + 0.4s) in LoadingScreen.css.
 const LOADING_DURATION = 1800
 
-// The loading screen runs once per page load — navigating back to Home
-// re-mounts this component, but this module-level flag persists across
-// those re-mounts (only a full page reload resets it). The hero entrance
+// The loading screen runs once per browser tab session, not once per Home
+// mount — sessionStorage (rather than a plain module-level flag) is what
+// makes that distinction hold up: a module-level flag resets on any full
+// page reload, even a reload on a completely different page like /about,
+// which has no memory of Home's loading screen already having played
+// earlier in the session — so navigating to Home afterward looked like
+// the first time all over again. sessionStorage survives that reload,
+// while still resetting for a genuinely new tab/visit. The hero entrance
 // animation below it is not similarly gated: it replays every time Home
 // is (re)mounted, same as every other page's entrance animation.
-let hasShownLoadingScreen = false
+const LOADING_SEEN_KEY = 'home-loading-seen'
+
+function hasShownLoadingScreen(): boolean {
+  try {
+    return sessionStorage.getItem(LOADING_SEEN_KEY) === '1'
+  } catch {
+    return false
+  }
+}
+
+function markLoadingScreenShown() {
+  try {
+    sessionStorage.setItem(LOADING_SEEN_KEY, '1')
+  } catch {
+    // Ignore — e.g. storage disabled/restricted. Worst case, the loading
+    // screen plays again on the next full reload.
+  }
+}
 
 // How long the mountain/name entrance takes (seconds) — the nav and
 // contact buttons wait this long before they start animating in.
@@ -31,12 +53,12 @@ const STAR_DRIFT_Y = 16
 export default function Home() {
   const starLeftRef = useRef<HTMLDivElement>(null)
   const starRightRef = useRef<HTMLDivElement>(null)
-  const [loading, setLoading] = useState(!hasShownLoadingScreen)
+  const [loading, setLoading] = useState(() => !hasShownLoadingScreen())
 
   useEffect(() => {
-    if (hasShownLoadingScreen) return
+    if (hasShownLoadingScreen()) return
     const timer = window.setTimeout(() => {
-      hasShownLoadingScreen = true
+      markLoadingScreenShown()
       setLoading(false)
     }, LOADING_DURATION)
     return () => window.clearTimeout(timer)
