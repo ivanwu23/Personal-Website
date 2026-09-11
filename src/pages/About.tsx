@@ -208,7 +208,7 @@ export default function About() {
         </div>
 
         <div className="about-behind">
-          <h2 className="about-behind-title">Behind the scenes</h2>
+          <h2 className="about-behind-title">Behind the scenes...</h2>
           <div className="about-behind-grid">
             {PERSONALITIES.map((p) => (
               <div key={p.title} className="about-behind-card">
