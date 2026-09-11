@@ -83,25 +83,55 @@ export default function About() {
 
   // Tracks which of the three points is centered in the viewport, so the
   // "01/03" counter beside them stays in sync as the user scrolls.
+  //
+  // This used to be an IntersectionObserver watching a thin band across
+  // the vertical center (rootMargin: '-45% 0px -45% 0px'), only acting on
+  // entries becoming intersecting and ignoring the rest. That leaves
+  // nothing to correct the count back on a reversal right at a
+  // point-to-point boundary: if the callback's last actual signal was
+  // "point 2 just entered," scrolling back up by only a little can undo
+  // that crossing before the browser gets around to reporting point 1
+  // re-intersecting — IntersectionObserver callbacks aren't guaranteed to
+  // fire for every scroll position, only "as soon as possible" — leaving
+  // the count stuck on 2 until it re-syncs much later, if ever, from that
+  // small back-and-forth. Recomputing directly from live geometry on every
+  // scroll frame has no such gap: whichever point is actually closest to
+  // center right now is always knowable synchronously, independent of
+  // direction or how the last crossing happened to be reported.
   useEffect(() => {
     const elements = pointRefs.current.filter((el): el is HTMLDivElement => el !== null)
     if (elements.length === 0) return
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (!entry.isIntersecting) return
-          const index = elements.indexOf(entry.target as HTMLDivElement)
-          if (index !== -1) setActivePoint(index)
-        })
-      },
-      // A thin band across the vertical center of the viewport — whichever
-      // point is crossing it counts as the active one.
-      { rootMargin: '-45% 0px -45% 0px', threshold: 0 },
-    )
+    let raf = 0
+    const updateActive = () => {
+      raf = 0
+      const viewportCenter = window.innerHeight / 2
+      let closest = 0
+      let closestDist = Infinity
+      elements.forEach((el, i) => {
+        const rect = el.getBoundingClientRect()
+        const dist = Math.abs(rect.top + rect.height / 2 - viewportCenter)
+        if (dist < closestDist) {
+          closestDist = dist
+          closest = i
+        }
+      })
+      setActivePoint((prev) => (prev === closest ? prev : closest))
+    }
 
-    elements.forEach((el) => observer.observe(el))
-    return () => observer.disconnect()
+    const onScroll = () => {
+      if (raf) return
+      raf = requestAnimationFrame(updateActive)
+    }
+
+    updateActive()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onScroll)
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
+      if (raf) cancelAnimationFrame(raf)
+    }
   }, [])
 
   return (
