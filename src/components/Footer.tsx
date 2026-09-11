@@ -55,7 +55,7 @@ export default function Footer() {
           <span>
             ©{FULL_NAME} {year}. All rights reserved.
           </span>
-          <span>Don’t think, just do</span>
+          <span>Design is like dating — you know what you want until you see something better</span>
         </div>
       </div>
     </footer>
