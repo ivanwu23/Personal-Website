@@ -177,8 +177,16 @@
   bottom: 0;
   width: 42%;
   pointer-events: none;
-  backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
+}
+
+/* Separate rule so minification doesn't drop it as a "duplicate" of
+   -webkit-backdrop-filter above — see the comment on .navbar in
+   NavBar.css for the full explanation. */
+@supports (backdrop-filter: blur(1px)) {
+  .projects-slide-edge {
+    backdrop-filter: blur(5px);
+  }
 }
 
 .is-peek-left .projects-slide-edge {
@@ -308,9 +316,17 @@
   justify-content: center;
   padding: 24px;
   background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(2px);
   -webkit-backdrop-filter: blur(2px);
   animation: project-modal-fade-in 0.25s var(--ease-out-expo) both;
+}
+
+/* Separate rule so minification doesn't drop it as a "duplicate" of
+   -webkit-backdrop-filter above — see the comment on .navbar in
+   NavBar.css for the full explanation. */
+@supports (backdrop-filter: blur(1px)) {
+  .project-modal-backdrop {
+    backdrop-filter: blur(2px);
+  }
 }
 
 @keyframes project-modal-fade-in {
