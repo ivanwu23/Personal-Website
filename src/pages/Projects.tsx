@@ -101,6 +101,10 @@ export default function Projects() {
   // slide gets the "is-active" look, and which two get the edge-blur peek
   // treatment.
   const [activeDomIndex, setActiveDomIndex] = useState(REAL_OFFSET)
+  // False until the initial scroll position below has actually been set.
+  // The carousel stays hidden until then — see that effect for why the
+  // correction can't happen synchronously on mount.
+  const [ready, setReady] = useState(false)
 
   const trackRef = useRef<HTMLDivElement>(null)
   const slideRefs = useRef<(HTMLDivElement | null)[]>([])
@@ -168,8 +172,24 @@ export default function Projects() {
   // recognized the horizontal overflow, even though the slides themselves
   // already measure correctly), so scrollLeft assignments are clamped to
   // 0 until a frame passes.
+  //
+  // The carousel's entrance fade-in (in CSS, via .projects--intro) has its
+  // own fixed delay before it starts — normally comfortably longer than
+  // this rAF takes, so the correction finishes while the carousel is still
+  // invisible and nothing is ever seen out of place. But that's a race,
+  // not a guarantee: under real-world load (slow devices, a busy main
+  // thread from image decoding or a font swap right after mount), the
+  // rAF can lose that race, briefly exposing the still-unpositioned
+  // carousel resting at its very first DOM slide — dimmed like every
+  // other non-active slide, with nothing rendered before it to peek at,
+  // since nothing exists there. `ready` makes the reveal wait on the
+  // actual correction instead of gambling on timing.
   useLayoutEffect(() => {
-    requestAnimationFrame(() => scrollToDom(REAL_OFFSET, 'auto'))
+    const raf = requestAnimationFrame(() => {
+      scrollToDom(REAL_OFFSET, 'auto')
+      setReady(true)
+    })
+    return () => cancelAnimationFrame(raf)
   }, [])
 
   function goNext() {
@@ -327,7 +347,7 @@ export default function Projects() {
           </p>
         </header>
 
-        <div className="projects-carousel">
+        <div className={ready ? 'projects-carousel' : 'projects-carousel is-positioning'}>
           <button
             type="button"
             className="projects-arrow projects-arrow--prev"

@@ -82,6 +82,16 @@
   margin-top: clamp(24px, 5vh, 56px);
 }
 
+/* Stays invisible until the initial scroll position is actually set (see
+   Projects.tsx) — otherwise, on a slow enough load, the entrance fade-in
+   below can reveal the carousel still resting at its very first DOM
+   slide: dimmed like any other non-active slide, with nothing rendered
+   before it to peek at. visibility (not display) so layout/measurement
+   is unaffected. */
+.projects-carousel.is-positioning {
+  visibility: hidden;
+}
+
 .projects-track {
   display: flex;
   align-items: center;
