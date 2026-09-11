@@ -3,13 +3,16 @@ import Home from './pages/Home'
 import About from './pages/About'
 import Resume from './pages/Resume'
 import Projects from './pages/Projects'
-import Placeholder from './pages/Placeholder'
+import Contact from './pages/Contact'
 import ScrollHint from './components/ScrollHint'
+import ScrollToTop from './components/ScrollToTop'
 import RequireNavAccess from './components/RequireNavAccess'
+import Footer from './components/Footer'
 
 function App() {
   return (
     <>
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route
@@ -17,6 +20,7 @@ function App() {
           element={
             <RequireNavAccess>
               <About />
+              <Footer />
             </RequireNavAccess>
           }
         />
@@ -25,6 +29,7 @@ function App() {
           element={
             <RequireNavAccess>
               <Resume />
+              <Footer />
             </RequireNavAccess>
           }
         />
@@ -33,6 +38,7 @@ function App() {
           element={
             <RequireNavAccess>
               <Projects />
+              <Footer />
             </RequireNavAccess>
           }
         />
@@ -40,7 +46,8 @@ function App() {
           path="/contact"
           element={
             <RequireNavAccess>
-              <Placeholder title="Contact" />
+              <Contact />
+              <Footer />
             </RequireNavAccess>
           }
         />

@@ -196,6 +196,227 @@
   }
 }
 
+/* ---- Three-point sticky counter ---- */
+
+.about-points {
+  margin-top: clamp(64px, 10vw, 120px);
+}
+
+.about-points-track {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(120px, 200px) 1fr;
+  gap: clamp(24px, 5vw, 64px);
+  align-items: start;
+}
+
+.about-points-counter {
+  /* Same offset as the page's own top padding, so when stuck, the counter
+     lines up with where the page's heading originally sat. Sticky's own
+     containing block here is the counter's grid area, which spans the
+     full height of .about-points-track (the row's height is set by the
+     much-taller .about-points-list) — so it stays pinned in the viewport
+     only until that area's bottom edge (i.e. the end of the third point)
+     reaches `top` + its own height, then it settles there on its own, no
+     JS required. That handoff needs enough scrollable content after this
+     section for the browser to ever reach that scroll position — the
+     "Behind the scenes" section below supplies it. */
+  position: sticky;
+  top: 140px;
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  color: var(--ink);
+}
+
+.about-points-list {
+  grid-column: 2;
+  display: flex;
+  flex-direction: column;
+}
+
+.about-points-current-mask {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  font-family: var(--font-name);
+  font-weight: 600;
+  font-size: clamp(48px, 6vw, 72px);
+  line-height: 1;
+  height: 1em;
+  /* Fixed width (rather than sizing to content) plus tabular-nums below
+     is what keeps /03 from shifting: this font isn't monospaced, so "02"
+     and "03" render at slightly different natural widths, which — with
+     the auto-sized inline-block this used to be — nudged the sibling
+     .about-points-total left/right by a couple of px on every change. */
+  width: 2ch;
+}
+
+.about-points-current {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  font-variant-numeric: tabular-nums;
+}
+
+.about-points-current.is-entering {
+  animation: about-points-roll-in 0.45s var(--ease-out-expo) both;
+}
+
+.about-points-current.is-exiting {
+  animation: about-points-roll-out 0.45s var(--ease-out-expo) both;
+}
+
+/* The new number pushes the old one out: both move upward together, one
+   arriving as the other leaves, rather than the new one simply fading or
+   rolling in on its own once the old one is already gone. */
+@keyframes about-points-roll-in {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes about-points-roll-out {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-100%);
+  }
+}
+
+.about-points-total {
+  font-family: var(--sans);
+  font-size: 15px;
+  font-weight: 600;
+  opacity: 0.5;
+}
+
+.about-point {
+  min-height: 62vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 40px 0;
+  border-top: 1px solid var(--line);
+}
+
+.about-point:first-child {
+  border-top: 0;
+}
+
+/* Only shown on mobile (below), where the sticky counter is disabled in
+   favor of an inline label on each point. */
+.about-point-index {
+  display: none;
+}
+
+.about-point-title {
+  margin: 0;
+  font-family: var(--font-name);
+  font-weight: 600;
+  font-size: clamp(28px, 4vw, 44px);
+  line-height: 1.1;
+  color: var(--ink);
+}
+
+.about-point-desc {
+  margin: 16px 0 0;
+  max-width: 620px;
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--ink);
+  opacity: 0.8;
+}
+
+/* ---- Behind the scenes ---- */
+
+.about-behind {
+  margin-top: clamp(64px, 10vw, 120px);
+}
+
+.about-behind-title {
+  margin: 0 0 clamp(24px, 4vw, 40px);
+  text-align: left;
+  font-family: var(--font-name);
+  font-weight: 600;
+  font-size: clamp(32px, 5vw, 48px);
+  line-height: 1.1;
+  color: var(--ink);
+}
+
+.about-behind-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.about-behind-card {
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  border-radius: 20px;
+  background: var(--paper-dim);
+  filter: blur(0);
+  transition:
+    filter 0.6s var(--ease-out-expo),
+    opacity 0.6s var(--ease-out-expo);
+}
+
+/* Hovering any one card blurs the other two. Keyed off :has() rather than
+   a plain :hover on the grid — the grid's own box includes the gaps
+   between cards, so a bare :hover there would fire (and blur everything)
+   even when the pointer is just passing between panels, not over one. */
+.about-behind-grid:has(.about-behind-card:hover) .about-behind-card:not(:hover) {
+  filter: blur(4px);
+  opacity: 0.6;
+}
+
+.about-behind-card-title {
+  margin: 0;
+  font-family: var(--font-name);
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 1.25;
+  color: var(--ink);
+}
+
+.about-behind-card-desc {
+  margin: 10px 0 20px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--ink);
+  opacity: 0.75;
+}
+
+.about-behind-gallery {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 5 / 7;
+  margin-top: auto;
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--paper);
+}
+
+.about-behind-photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.6s var(--ease-out-expo);
+}
+
+.about-behind-photo.is-active {
+  opacity: 1;
+}
+
 /* ---- Entrance animation (plays once per page load) ---- */
 
 .about--intro .about-head,
@@ -252,6 +473,36 @@
 
   .about-skills-list {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* The sticky side-counter doesn't translate well to a single narrow
+     column, so each point gets its own small inline "01/03" instead. */
+  .about-points-track {
+    grid-template-columns: 1fr;
+  }
+
+  .about-points-counter {
+    display: none;
+  }
+
+  .about-point {
+    min-height: 0;
+    padding: 28px 0;
+  }
+
+  .about-point-index {
+    display: block;
+    margin-bottom: 10px;
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--ink);
+    opacity: 0.5;
+  }
+
+  .about-behind-grid {
+    grid-template-columns: 1fr;
   }
 }
 

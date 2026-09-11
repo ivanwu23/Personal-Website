@@ -29,6 +29,59 @@ export const NAV_LINKS = [
   { label: 'Contact', to: '/contact' },
 ]
 
+export type AboutPoint = {
+  title: string
+  description: string
+}
+
+// The scroll-pinned "01/03" section near the bottom of the About page.
+export const ABOUT_POINTS: AboutPoint[] = [
+  {
+    title: 'Keep Building',
+    description:
+      'I believe the best way to learn is by building. Every project, mistake, and challenge gives me something new to understand. I want to keep pushing myself to learn new technologies, explore new ideas, and become a better developer along the way.',
+  },
+  {
+    title: 'Design With Purpose',
+    description:
+      'I see development as more than just writing code. I care about how something looks, feels, and works for the person using it. I enjoy finding the balance between creativity and functionality to create experiences that are both enjoyable and useful.',
+  },
+  {
+    title: 'Make Ideas Real',
+    description:
+      'I’m drawn to the process of turning an idea into something real. Whether it starts as a sketch, a simple thought, or a problem that needs solving, I enjoy experimenting, building, and seeing an idea come to life through technology.',
+  },
+]
+
+export type Personality = {
+  title: string
+  description: string
+  /** One image is shown statically; more than one rotates on a timer. */
+  images: string[]
+}
+
+// The "Behind the scenes" cards near the bottom of the About page.
+export const PERSONALITIES: Personality[] = [
+  {
+    title: 'Drawing & Painting',
+    description:
+      'I’ve always enjoyed drawing and painting, whether it’s anime, realism, or just experimenting with something new.',
+    images: ['/personality/drawing1.png', '/personality/drawing2.png', '/personality/drawing3.png'],
+  },
+  {
+    title: 'Music & Dance',
+    description:
+      'Music is a big part of how I relax. I’m always listening to K-pop and J-pop, and every now and then I’ll try learning a dance just for fun.',
+    images: ['/personality/music.png'],
+  },
+  {
+    title: 'Spending Time With Friends',
+    description:
+      'Outside of work, I enjoy spending time with the people around me. Whether it’s trying something new or just hanging out, I value the time I get to spend with friends.',
+    images: ['/personality/friends1.jpeg', '/personality/friends2.jpeg', '/personality/friends3.jpeg'],
+  },
+]
+
 export type Experience = {
   title: string
   subtitle: string
@@ -65,7 +118,7 @@ export type Project = {
 export const PROJECTS: Project[] = [
   {
     title: 'Personal Website',
-    subtitle: 'Creator • UI / Dev',
+    subtitle: 'Creator • UI / WUX',
     image: '/PJ1.png',
     description:
       'A personal portfolio site built to showcase my work and background, with a focus on clean typography, smooth page transitions, and thoughtful micro-interactions throughout.',

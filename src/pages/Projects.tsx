@@ -59,9 +59,6 @@ function ProjectModal({ project, onClose }: { project: Project; onClose: () => v
   )
 }
 
-// The entrance animation runs once per full page load, same as About/Resume.
-let hasIntroPlayed = false
-
 type DragState = {
   startX: number
   startScrollLeft: number
@@ -92,11 +89,6 @@ function realIndexForDom(domIndex: number) {
 }
 
 export default function Projects() {
-  const [playIntro] = useState(() => !hasIntroPlayed)
-  useEffect(() => {
-    hasIntroPlayed = true
-  }, [])
-
   // The real project index (0..COUNT-1) — drives the header text and dots.
   const [activeIndex, setActiveIndex] = useState(0)
   // Whether the title/subtitle should play their little swap-in animation.
@@ -318,7 +310,7 @@ export default function Projects() {
       <NavBar />
       <ContactBar />
 
-      <section className={playIntro ? 'projects projects--intro' : 'projects'}>
+      <section className="projects projects--intro">
         <header className="projects-head">
           <p className="projects-eyebrow">Projects</p>
           <h1

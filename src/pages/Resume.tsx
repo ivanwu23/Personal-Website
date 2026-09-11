@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import NavBar from '../components/NavBar'
 import ContactBar from '../components/ContactBar'
 import { EXPERIENCES, TIMELINE_START_YEAR } from '../data/site'
@@ -10,16 +10,7 @@ function shortYear(year: number): string {
   return String(year).slice(2)
 }
 
-// The entrance animation runs once per full page load, same as About's.
-let hasIntroPlayed = false
-
 export default function Resume() {
-  const [playIntro] = useState(() => !hasIntroPlayed)
-
-  useEffect(() => {
-    hasIntroPlayed = true
-  }, [])
-
   const currentYear = new Date().getFullYear()
   const timelineEnd = Math.max(currentYear, TIMELINE_START_YEAR + 1)
   const span = timelineEnd - TIMELINE_START_YEAR
@@ -46,7 +37,7 @@ export default function Resume() {
       <NavBar />
       <ContactBar />
 
-      <section className={playIntro ? 'resume resume--intro' : 'resume'}>
+      <section className="resume resume--intro">
         <header className="resume-head">
           <p className="resume-eyebrow">Resume</p>
           <h1 className="resume-title">My Experiences</h1>
@@ -73,9 +64,9 @@ export default function Resume() {
               // Set as a CSS custom property (rather than animationDelay
               // directly) because the reveal animation lives on ::after,
               // which inline styles can't target.
-              const bubbleStyle = playIntro
-                ? ({ '--reveal-delay': `${0.25 + i * 0.09}s` } as CSSProperties)
-                : undefined
+              const bubbleStyle = {
+                '--reveal-delay': `${0.25 + i * 0.09}s`,
+              } as CSSProperties
               // 21-25 reads as 2021-2025: two-digit start year, two-digit
               // end year (or "~" while still ongoing).
               const dateLabel =
