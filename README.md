@@ -19,7 +19,7 @@ This website showcases my work in **UI/UX design, front-end development, and cre
 * CSS
 * Vite
 
-## 🌱 About Me
+## ✦ About Me
 
 I'm a Computer Science student interested in the intersection of **design, technology, and problem-solving**. I enjoy creating interfaces that are simple, intuitive, and visually engaging.
 
