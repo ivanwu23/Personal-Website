@@ -118,7 +118,7 @@ export type Project = {
 export const PROJECTS: Project[] = [
   {
     title: 'Personal Website',
-    subtitle: 'Creator • UI / WUX',
+    subtitle: 'Creator • UI / UX',
     image: '/PJ1.png',
     description:
       'A personal portfolio site built to showcase my work and background, with a focus on clean typography, smooth page transitions, and thoughtful micro-interactions throughout.',
