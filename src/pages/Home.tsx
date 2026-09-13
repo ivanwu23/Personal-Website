@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import NavBar from '../components/NavBar'
 import ContactBar from '../components/ContactBar'
-import Sparkle from '../components/Sparkle'
 import ShootingStars from '../components/ShootingStars'
 import LoadingScreen from '../components/LoadingScreen'
 import { NAME, TAGLINE } from '../data/site'
@@ -93,10 +92,10 @@ export default function Home() {
       <ShootingStars />
 
       <div ref={starLeftRef} className="home-star home-star-left" aria-hidden="true">
-        <Sparkle />
+        <div className="home-star-icon" />
       </div>
       <div ref={starRightRef} className="home-star home-star-right" aria-hidden="true">
-        <Sparkle />
+        <div className="home-star-icon" />
       </div>
 
       <div className="home-hero">
