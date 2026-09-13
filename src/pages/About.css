@@ -268,7 +268,20 @@
   animation: about-points-roll-out 0.45s var(--ease-out-expo) both;
 }
 
-/* The new number pushes the old one out: both move upward together, one
+/* Counting down (a point further up the list becoming active) pushes in
+   the opposite direction — up when counting up, down when counting down —
+   so the animation always matches which way the user is actually
+   scrolling. Only the keyframe name changes here; duration/easing/fill
+   still come from the rules above. */
+.about-points-current.is-entering.is-reverse {
+  animation-name: about-points-roll-in-reverse;
+}
+
+.about-points-current.is-exiting.is-reverse {
+  animation-name: about-points-roll-out-reverse;
+}
+
+/* The new number pushes the old one out: both move together, one
    arriving as the other leaves, rather than the new one simply fading or
    rolling in on its own once the old one is already gone. */
 @keyframes about-points-roll-in {
@@ -286,6 +299,24 @@
   }
   to {
     transform: translateY(-100%);
+  }
+}
+
+@keyframes about-points-roll-in-reverse {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes about-points-roll-out-reverse {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(100%);
   }
 }
 

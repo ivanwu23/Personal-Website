@@ -59,6 +59,10 @@ export default function About() {
   // and out — null once nothing is transitioning. activePoint itself is
   // what the "entering" digit shows (see the effect below and the render).
   const [exitingPoint, setExitingPoint] = useState<number | null>(null)
+  // True while the count is going down (a point further up the list just
+  // became active) — the push animation runs in the opposite direction
+  // then, so it always visually matches the way the user is scrolling.
+  const [countingDown, setCountingDown] = useState(false)
   const prevActivePointRef = useRef(activePoint)
   const exitTimer = useRef<number | undefined>(undefined)
   const pointRefs = useRef<(HTMLDivElement | null)[]>([])
@@ -70,6 +74,7 @@ export default function About() {
   // appearing once the old one has already gone.
   useEffect(() => {
     if (prevActivePointRef.current !== activePoint) {
+      setCountingDown(activePoint < prevActivePointRef.current)
       setExitingPoint(prevActivePointRef.current)
       prevActivePointRef.current = activePoint
       window.clearTimeout(exitTimer.current)
@@ -204,13 +209,24 @@ export default function About() {
               <span className="about-points-current-mask">
                 {exitingPoint !== null && (
                   <span
-                    className="about-points-current is-exiting"
+                    className={
+                      countingDown
+                        ? 'about-points-current is-exiting is-reverse'
+                        : 'about-points-current is-exiting'
+                    }
                     key={`exit-${exitingPoint}`}
                   >
                     {pad(exitingPoint + 1)}
                   </span>
                 )}
-                <span className="about-points-current is-entering" key={`enter-${activePoint}`}>
+                <span
+                  className={
+                    countingDown
+                      ? 'about-points-current is-entering is-reverse'
+                      : 'about-points-current is-entering'
+                  }
+                  key={`enter-${activePoint}`}
+                >
                   {pad(activePoint + 1)}
                 </span>
               </span>
