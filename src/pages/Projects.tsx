@@ -171,24 +171,42 @@ export default function Projects() {
   // scrollWidth still equals its clientWidth (the browser hasn't yet
   // recognized the horizontal overflow, even though the slides themselves
   // already measure correctly), so scrollLeft assignments are clamped to
-  // 0 until a frame passes.
+  // 0 until that resolves.
   //
-  // The carousel's entrance fade-in (in CSS, via .projects--intro) has its
-  // own fixed delay before it starts — normally comfortably longer than
-  // this rAF takes, so the correction finishes while the carousel is still
-  // invisible and nothing is ever seen out of place. But that's a race,
-  // not a guarantee: under real-world load (slow devices, a busy main
-  // thread from image decoding or a font swap right after mount), the
-  // rAF can lose that race, briefly exposing the still-unpositioned
-  // carousel resting at its very first DOM slide — dimmed like every
-  // other non-active slide, with nothing rendered before it to peek at,
-  // since nothing exists there. `ready` makes the reveal wait on the
-  // actual correction instead of gambling on timing.
+  // That used to be assumed to always resolve within a single deferred
+  // frame, with `ready` (see below) only guarding against the *reveal*
+  // outrunning that one frame. In production, over a real network and on
+  // real devices, it sometimes doesn't resolve in just one frame — extra
+  // layout work right after mount (a web font swap, image decoding, a
+  // slow device) can push it out further — and when that happens,
+  // `scrollToDom` itself silently gets clamped back to 0 even though
+  // `ready` still flips true right on schedule, revealing the carousel
+  // resting at its very first DOM slide: dimmed like every other
+  // non-active slide, with nothing rendered before it to peek at, since
+  // nothing exists there. Verifying the correction actually landed (a
+  // genuinely centered REAL_OFFSET is never at scrollLeft 0 — the track
+  // is padded on both sides specifically so no real position ever is) and
+  // retrying on the next frame when it hasn't closes that gap: the reveal
+  // now waits on confirmed success however many frames that takes, rather
+  // than gambling that one is always enough.
   useLayoutEffect(() => {
-    const raf = requestAnimationFrame(() => {
+    let raf = 0
+    let attempts = 0
+    const MAX_ATTEMPTS = 30 // ~0.5s at 60fps — generous; real cases resolve in 1-2 frames
+
+    function attempt() {
+      attempts++
       scrollToDom(REAL_OFFSET, 'auto')
-      setReady(true)
-    })
+      const track = trackRef.current
+      const positioned = !!track && track.scrollLeft > 0
+      if (positioned || attempts >= MAX_ATTEMPTS) {
+        setReady(true)
+      } else {
+        raf = requestAnimationFrame(attempt)
+      }
+    }
+
+    raf = requestAnimationFrame(attempt)
     return () => cancelAnimationFrame(raf)
   }, [])
 
