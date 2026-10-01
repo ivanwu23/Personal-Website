@@ -154,7 +154,7 @@ export const CONTACT_LINKS: ContactLink[] = [
   { label: 'Phone', href: 'tel:+1 (347) 425-5405', icon: '/phone-call.png' },
   {
     label: 'Resume',
-    href: 'https://drive.google.com/file/d/1MjsfaldPtZgiWjEuWBHdGtGabl3fkTVR/view?usp=drive_link',
+    href: 'https://drive.google.com/file/d/1THSGQ5P7dGE3bMIom9QvHFz3SY1ivQ6P/view?usp=drive_link',
     icon: '/form.png',
     displayText: 'Resume',
   },
