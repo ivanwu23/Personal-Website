@@ -1,19 +1,19 @@
 import { useMemo } from 'react'
 import NavBar from '../components/NavBar'
 import ContactBar from '../components/ContactBar'
-import { EXPERIENCES, TIMELINE_START_YEAR } from '../data/site'
+import { EXPERIENCES, TIMELINE_END_YEAR, TIMELINE_START_YEAR } from '../data/site'
 import type { CSSProperties } from 'react'
 import './Resume.css'
 
-// Two-digit year label, e.g. 2024 -> "24".
+// Two-digit year label, e.g. 2024 -> "24". startYear/endYear can carry a
+// fractional part for month precision (see `date` in site.ts) — the
+// label only ever shows the whole year, so that part is dropped here.
 function shortYear(year: number): string {
-  return String(year).slice(2)
+  return String(Math.floor(year)).slice(2)
 }
 
 export default function Resume() {
-  const currentYear = new Date().getFullYear()
-  const timelineEnd = Math.max(currentYear, TIMELINE_START_YEAR + 1)
-  const span = timelineEnd - TIMELINE_START_YEAR
+  const span = TIMELINE_END_YEAR - TIMELINE_START_YEAR
 
   const years = useMemo(
     () => Array.from({ length: span + 1 }, (_, i) => TIMELINE_START_YEAR + i),
@@ -46,9 +46,13 @@ export default function Resume() {
         <div className="resume-timeline-wrap">
           <ul className="resume-bubbles">
             {EXPERIENCES.map((exp, i) => {
-              const endValue = exp.endYear === 'current' ? currentYear : exp.endYear
+              // 'current' always reaches the bar's own far right edge
+              // (TIMELINE_END_YEAR), not whatever today's actual year is —
+              // ongoing experiences should visually extend all the way,
+              // not stop short at "now".
+              const endValue = exp.endYear === 'current' ? TIMELINE_END_YEAR : exp.endYear
               // Where the experience's start and end years fall along the
-              // 2020 -> current-year timeline, as fractions of its span.
+              // timeline, as fractions of its span.
               const startFraction = Math.min(
                 1,
                 Math.max(0, (exp.startYear - TIMELINE_START_YEAR) / span),
@@ -57,9 +61,19 @@ export default function Resume() {
                 1,
                 Math.max(0, (endValue - TIMELINE_START_YEAR) / span),
               )
+              // The bubble's own `width: <percentage>` (in CSS) resolves
+              // against .resume-row's content box — which excludes the
+              // padding-right that --row-offset itself adds, i.e. a box
+              // that's only (rowWidth × endFraction) wide, not the row's
+              // full width. Dividing by endFraction here compensates for
+              // that, so the rendered pixel width still comes out to
+              // exactly (endFraction - startFraction) of the full row
+              // (and therefore of the timeline itself) — without it,
+              // every bubble rendered narrower than its true span, more
+              // so for older ones (whose endFraction is smaller).
               const rowStyle = {
                 '--row-offset': `${(1 - endFraction) * 100}%`,
-                '--row-width': `${(endFraction - startFraction) * 100}%`,
+                '--row-width': `${endFraction > 0 ? ((endFraction - startFraction) / endFraction) * 100 : 0}%`,
               } as CSSProperties
               // Set as a CSS custom property (rather than animationDelay
               // directly) because the reveal animation lives on ::after,
@@ -68,14 +82,18 @@ export default function Resume() {
                 '--reveal-delay': `${0.25 + i * 0.09}s`,
               } as CSSProperties
               // 21-25 reads as 2021-2025: two-digit start year, two-digit
-              // end year (or "~" while still ongoing).
+              // end year (or "~" while still ongoing). A start and end
+              // within the same calendar year (e.g. Jan-May 2026) would
+              // otherwise read as "26-26" — just the one year instead.
               const dateLabel =
                 exp.endYear === 'current'
                   ? `${shortYear(exp.startYear)}~`
-                  : `${shortYear(exp.startYear)}-${shortYear(exp.endYear)}`
+                  : Math.floor(exp.startYear) === Math.floor(exp.endYear)
+                    ? shortYear(exp.startYear)
+                    : `${shortYear(exp.startYear)}-${shortYear(exp.endYear)}`
 
               return (
-                <li key={exp.title} className="resume-row" style={rowStyle}>
+                <li key={`${exp.title}-${exp.subtitle}`} className="resume-row" style={rowStyle}>
                   <div className="resume-bubble" style={bubbleStyle}>
                     <div className="resume-bubble-text">
                       <p className="resume-bubble-title">{exp.title}</p>

@@ -56,9 +56,19 @@
   min-height: 0;
   list-style: none;
   margin: 0;
-  padding: 4px 20px 24px 4px;
+  /* Left/right must stay equal, and must match .resume-timeline-track's
+     own side margin below — each bubble's position is a % of this
+     element's content width, and the ticks' positions are a % of the
+     track's, so any difference between the two throws off alignment
+     between a bubble and its correct year mark (worse the further left
+     a bubble sits, since both are positioned from the right edge). The
+     scrollbar is hidden (rather than reserved via scrollbar-gutter, which
+     would itself have reintroduced exactly that kind of mismatch) so it
+     can never eat into this width either — scrolling still works via
+     wheel/trackpad/touch, just without a native scrollbar to show for it. */
+  padding: 4px 2px 24px 2px;
   overflow-y: auto;
-  scrollbar-gutter: stable;
+  scrollbar-width: none;
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -81,6 +91,10 @@
     black calc(100% - 24px),
     transparent
   );
+}
+
+.resume-bubbles::-webkit-scrollbar {
+  display: none;
 }
 
 .resume-row {

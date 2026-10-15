@@ -85,24 +85,52 @@ export const PERSONALITIES: Personality[] = [
 export type Experience = {
   title: string
   subtitle: string
+  /** May carry a fractional part for month precision — see `date` below. */
   startYear: number
-  /** A year, or 'current' for experiences still ongoing. */
+  /** A year (same month precision as startYear), or 'current'. */
   endYear: number | 'current'
 }
 
-// Shown as bubbles on the Resume timeline, most recent first.
+// A year plus a specific month (1-12), as the single fractional number
+// Experience.startYear/endYear expect — e.g. date(2025, 1) is Jan 2025.
+// Lets the Resume timeline position a bubble by month rather than only by
+// whole year, while the bubble's own label (see Resume.tsx) still always
+// displays just the year.
+function date(year: number, month: number): number {
+  return year + (month - 1) / 12
+}
+
+// Shown as bubbles on the Resume timeline, most recent first. (Roles
+// that are really showcase projects rather than positions — e.g. a
+// "Developer" credit — belong on the Projects page instead, not here.)
 export const EXPERIENCES: Experience[] = [
-  { title: 'UB Forge', subtitle: 'Marketing Director', startYear: 2025, endYear: 2026 },
-  { title: 'Match-A-Room', subtitle: 'Developer', startYear: 2024, endYear: 2026 },
-  { title: 'HeatSeek', subtitle: 'Developer', startYear: 2024, endYear: 2026 },
+  { title: 'UB Forge', subtitle: 'Fellow', startYear: date(2026, 1), endYear: 'current' },
+  {
+    title: 'UB Forge',
+    subtitle: 'Marketing Director',
+    startYear: date(2026, 1),
+    endYear: date(2026, 5),
+  },
+  {
+    title: 'Alpha Kappa Psi',
+    subtitle: 'Marketing Assistant',
+    startYear: date(2025, 8),
+    endYear: date(2026, 9),
+  },
+  {
+    title: 'Alpha Kappa Psi',
+    subtitle: 'Technical Director',
+    startYear: date(2025, 1),
+    endYear: 'current',
+  },
   { title: 'Alpha Kappa Psi', subtitle: 'Beta Iota Member', startYear: 2024, endYear: 'current' },
-  { title: 'Multi-Media Database', subtitle: 'Developer', startYear: 2023, endYear: 2025 },
-  { title: 'CPC Brooklyn', subtitle: 'Teaching Assistant', startYear: 2021, endYear: 2025 },
 ]
 
-// The timeline bar on the Resume page always starts here and runs through
-// the current year, so it never needs manual updates.
-export const TIMELINE_START_YEAR = 2020
+// The timeline bar on the Resume page always spans this fixed range —
+// ongoing ('current') experiences always draw out to TIMELINE_END_YEAR
+// (the bar's own far right edge), not to whatever today's actual year is.
+export const TIMELINE_START_YEAR = 2022
+export const TIMELINE_END_YEAR = 2027
 
 export type Project = {
   title: string
@@ -132,10 +160,17 @@ export const PROJECTS: Project[] = [
   },
   {
     title: 'MatchARoom',
-    subtitle: 'Creator • Full-Stack',
+    subtitle: 'Dev • Full-Stack',
     image: '/PJ3.png',
     description:
       'A full-stack roommate-matching platform where users can post listings, browse rooms, and connect with potential roommates through a community-style feed.',
+  },
+  {
+    title: 'UnGatekeep',
+    subtitle: 'Dev • Full-Stack',
+    image: '/PJ4.png',
+    description:
+      'A full-stack community platform for sharing clothing finds and cheaper alternatives — post what you tracked down, or ask for help finding a similar (and more affordable) version of something you can’t.',
   },
 ]
 
@@ -154,7 +189,7 @@ export const CONTACT_LINKS: ContactLink[] = [
   { label: 'Phone', href: 'tel:+1 (347) 425-5405', icon: '/phone-call.png' },
   {
     label: 'Resume',
-    href: 'https://drive.google.com/file/d/1THSGQ5P7dGE3bMIom9QvHFz3SY1ivQ6P/view?usp=drive_link',
+    href: 'https://drive.google.com/file/d/1aq-06SZWicrWKI3l1RT4zVCVjTV_gLTP/view?usp=drive_link',
     icon: '/form.png',
     displayText: 'Resume',
   },
