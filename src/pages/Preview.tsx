@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { ComponentType } from 'react'
 import { NAV_LINKS } from '../data/site'
 import Home from './Home'
@@ -36,98 +36,70 @@ function sectionId(to: string): string {
 // React tear it down and build it fresh) the first time it's actually
 // scrolled into view, so its mount animations fire for real right as you
 // reach it — same thing visiting it as its own route used to do, just
-// re-triggered by scroll position instead of by navigating.
-//
-// A section that isn't already in view at mount (i.e. every page but
-// Home) starts hidden — not just un-animated, but actually hidden —
-// until that first reveal, specifically so there's nothing to see there
-// yet: without that, the already-mounted-and-settled page would be
-// sitting there fully visible (its mount animation already played,
-// off-screen, same as above) for however long it takes the scroll to
-// cross the intersection threshold, then visibly reset and replay —
+// re-triggered by scroll position instead of by navigating. Until that
+// happens it stays hidden — not just un-animated, but actually hidden —
+// since otherwise the already-mounted-and-settled page would sit there
+// fully visible (its mount animation already played, off-screen) until
+// the scroll crosses the threshold, then visibly reset and replay —
 // looking like it "was already loaded" and only then decided to animate.
 //
-// Home is exempted from all of this — it's visible immediately at mount,
-// same as it always was at "/", so it only ever gets that one natural
-// play. Without this exemption, the mount-time intersection check below
-// would still count as "entering view" and trigger an extra replay of
-// its own; and even guarding against only that specific redundant first
-// check (an earlier version of this did) wasn't enough — the *next*
-// legitimate transition back into view, i.e. scrolling away and back,
-// would still trigger a real replay, which is the "it plays again" bug
-// that approach had.
+// `skipReveal` is for Home only: it's visible immediately at mount, same
+// as it always was at "/", so it should just render normally with its
+// one natural play and never go through any of this.
 //
-// That "already in view at mount" check is deferred one frame (rather
-// than reading it synchronously pre-paint) specifically so it isn't
-// racing the browser's own scroll restoration on a reload: reading it
-// immediately sometimes ran before that restoration had applied, so a
-// section the visitor had actually reloaded already (partway) into —
-// most commonly About, given how close it sits to Home — could get
-// misjudged as not yet in view and get the hide-and-reveal treatment
-// applied mid-restoration, which was throwing off exactly where the
-// browser ultimately settled the scroll. One frame is enough for
-// restoration to have landed, and is short enough that even a genuinely
-// off-screen section being briefly un-hidden before this runs isn't
-// perceptible.
-function RevealSection({ id, Component }: { id: string; Component: ComponentType }) {
+// Telling "already in view at mount" (e.g. a reload landing mid-scroll,
+// which should just show instantly, no replay) apart from "scrolled into
+// view later" (which should replay) used to be done by hand — reading
+// the section's position with getBoundingClientRect and comparing it to
+// window.innerHeight. That was fighting the browser on its own turf: the
+// exact boundary it was testing against is also exactly where sections
+// sit (Home is min-height: 100svh, so the next one's top lands right at
+// window.innerHeight), and small, real discrepancies between svh and
+// innerHeight — which shift depending on the exact rendered height of
+// whatever's inside each page, among other things — kept landing right
+// on the wrong side of it. Rather than continuing to patch that with
+// bigger tolerance margins, this now just asks IntersectionObserver
+// directly, since answering exactly that question is what it's for: an
+// observer's very first callback always reports the current state
+// immediately on `.observe()`, so if the first callback already reports
+// intersecting, that's a reload-style "was already in view" and it just
+// reveals as-is; a later one reporting intersecting is a real
+// scroll-triggered entry, and that's what replays it.
+function RevealSection({
+  id,
+  Component,
+  skipReveal,
+}: {
+  id: string
+  Component: ComponentType
+  skipReveal?: boolean
+}) {
   const wrapRef = useRef<HTMLDivElement>(null)
   const [replayKey, setReplayKey] = useState(0)
-  const [isRevealed, setIsRevealed] = useState(false)
+  const [isRevealed, setIsRevealed] = useState(() => !!skipReveal)
 
-  useLayoutEffect(() => {
+  useEffect(() => {
+    if (skipReveal) return
     const el = wrapRef.current
     if (!el) return
 
-    let observer: IntersectionObserver | null = null
-
-    const frame = requestAnimationFrame(() => {
-      const rect = el.getBoundingClientRect()
-      // The buffer here matters more than it looks: Home is sized with
-      // min-height: 100svh, so on a fresh load the very next section's
-      // top sits right at window.innerHeight — a boundary so exact that
-      // svh-vs-innerHeight rounding noise can tip `rect.top` a hair under
-      // it. Without this margin that read as "already in view" (it's
-      // only `<`, but by a sliver), which skipped the hide-and-reveal
-      // treatment and let that section's own position: fixed ContactBar
-      // render immediately too — stacking directly on Home's (both
-      // pinned to the same spot on screen) and playing its entrance
-      // animation independently on top of it.
-      const alreadyInView = rect.top < window.innerHeight - 24 && rect.bottom > 0
-      if (alreadyInView) {
-        setIsRevealed(true)
-        return
-      }
-
-      observer = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting) {
-            setIsRevealed(true)
+    let isFirstCallback = true
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsRevealed(true)
+          if (!isFirstCallback) {
             setReplayKey((k) => k + 1)
-            observer?.disconnect()
           }
-        },
-        // threshold: 0 (rather than requiring some fraction of the
-        // section's own height to be visible, which for a section
-        // taller than the viewport could mean scrolling through a lot
-        // of dead, still-hidden space first) fires as soon as even a
-        // sliver is visible — no rootMargin lookahead on top of that:
-        // with sections sitting flush against each other (Home is
-        // min-height: 100svh with no gap before About), a positive
-        // bottom rootMargin put About's trigger zone within reach of the
-        // viewport before any scrolling happened at all, firing right at
-        // mount — which is the same "already loaded" bug this is meant
-        // to prevent, just caused here instead of by the mount-time
-        // geometry check above.
-        { threshold: 0 },
-      )
-      observer.observe(el)
-    })
-
-    return () => {
-      cancelAnimationFrame(frame)
-      observer?.disconnect()
-    }
-  }, [])
+          observer.disconnect()
+        }
+        isFirstCallback = false
+      },
+      { threshold: 0 },
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [skipReveal])
 
   return (
     <div
@@ -145,7 +117,7 @@ export default function Preview() {
 
   return (
     <div className="preview-stack">
-      <RevealSection id={home} Component={Home} />
+      <RevealSection id={home} Component={Home} skipReveal />
       <RevealSection id={about} Component={About} />
       <RevealSection id={resume} Component={Resume} />
       <RevealSection id={projects} Component={Projects} />
