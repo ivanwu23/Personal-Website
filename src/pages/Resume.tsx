@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import NavBar from '../components/NavBar'
 import ContactBar from '../components/ContactBar'
 import { EXPERIENCES, TIMELINE_END_YEAR, TIMELINE_START_YEAR } from '../data/site'
@@ -14,6 +14,34 @@ function shortYear(year: number): string {
 
 export default function Resume() {
   const span = TIMELINE_END_YEAR - TIMELINE_START_YEAR
+  const bubblesRef = useRef<HTMLUListElement>(null)
+
+  // Only fade an edge of the bubble list when it actually has more
+  // content scrolled past that edge — otherwise the first/last bubble
+  // gets faded just for sitting at the container's static boundary.
+  useEffect(() => {
+    const el = bubblesRef.current
+    if (!el) return
+
+    function updateFade() {
+      if (!el) return
+      el.classList.toggle('can-scroll-up', el.scrollTop > 1)
+      el.classList.toggle(
+        'can-scroll-down',
+        el.scrollTop + el.clientHeight < el.scrollHeight - 1,
+      )
+    }
+
+    updateFade()
+    el.addEventListener('scroll', updateFade, { passive: true })
+    const resizeObserver = new ResizeObserver(updateFade)
+    resizeObserver.observe(el)
+
+    return () => {
+      el.removeEventListener('scroll', updateFade)
+      resizeObserver.disconnect()
+    }
+  }, [])
 
   const years = useMemo(
     () => Array.from({ length: span + 1 }, (_, i) => TIMELINE_START_YEAR + i),
@@ -44,7 +72,7 @@ export default function Resume() {
         </header>
 
         <div className="resume-timeline-wrap">
-          <ul className="resume-bubbles">
+          <ul className="resume-bubbles" ref={bubblesRef}>
             {EXPERIENCES.map((exp, i) => {
               // 'current' always reaches the bar's own far right edge
               // (TIMELINE_END_YEAR), not whatever today's actual year is —

@@ -76,7 +76,26 @@
   scroll-snap-type: y mandatory;
   scroll-padding-block: 4px;
   /* Scrolled-past bubbles fade out at the edges instead of being sliced
-     flat by the container's bounds. */
+     flat by the container's bounds. No fade by default — the
+     .can-scroll-up / .can-scroll-down modifiers (toggled from JS based
+     on actual scroll position) are what turn each edge's fade on, so
+     the first/last bubble never fades just for sitting near the box's
+     static top/bottom. */
+  mask-image: none;
+  -webkit-mask-image: none;
+}
+
+.resume-bubbles.can-scroll-up:not(.can-scroll-down) {
+  mask-image: linear-gradient(to bottom, transparent, black 24px);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 24px);
+}
+
+.resume-bubbles.can-scroll-down:not(.can-scroll-up) {
+  mask-image: linear-gradient(to bottom, black calc(100% - 24px), transparent);
+  -webkit-mask-image: linear-gradient(to bottom, black calc(100% - 24px), transparent);
+}
+
+.resume-bubbles.can-scroll-up.can-scroll-down {
   mask-image: linear-gradient(
     to bottom,
     transparent,
