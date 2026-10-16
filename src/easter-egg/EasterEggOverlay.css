@@ -1,0 +1,283 @@
+.egg-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  overflow: hidden;
+  /* Swallows clicks while it's up, so nothing underneath gets pressed
+     mid-sequence. */
+  pointer-events: auto;
+}
+
+/* ---- fade, ready: black, a few shooting stars, then the captions ---- */
+
+/* One black layer from the fade all the way to the burst. */
+.egg-void {
+  position: absolute;
+  inset: 0;
+  background: #000;
+  animation: egg-void-in var(--egg-fade) ease-in both;
+}
+
+@keyframes egg-void-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Clears out just ahead of the first caption. */
+.egg-intro-stars {
+  position: absolute;
+  inset: 0;
+  animation: egg-fade-out 1s ease-out var(--egg-intro-stars-out) forwards;
+}
+
+/* All captions sit in the same spot, each waiting on its own delays.
+   The fade-out only fills forwards (no backwards fill), so while it's
+   waiting it leaves the fade-in's end state alone. */
+.egg-caption {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  margin: 0;
+  padding: 0 24px;
+  transform: translateY(-50%);
+  text-align: center;
+  font-family: var(--font-name);
+  font-weight: 600;
+  font-size: clamp(28px, 5vw, 64px);
+  letter-spacing: 0.04em;
+  color: #fff;
+  text-shadow: 0 0 24px rgba(255, 255, 255, 0.35);
+  animation:
+    egg-caption-in 0.8s var(--ease-out-expo) var(--egg-caption-in) both,
+    egg-caption-out 0.5s ease-in var(--egg-caption-out) forwards;
+}
+
+@keyframes egg-caption-in {
+  from {
+    opacity: 0;
+    letter-spacing: 0.3em;
+    filter: blur(8px);
+  }
+  to {
+    opacity: 1;
+    letter-spacing: 0.04em;
+    filter: blur(0);
+  }
+}
+
+@keyframes egg-caption-out {
+  from {
+    opacity: 1;
+    filter: blur(0);
+  }
+  to {
+    opacity: 0;
+    filter: blur(8px);
+  }
+}
+
+/* ---- void: the star spins up ---- */
+
+/* Grow and spin each run in two legs — slow through most of the song's
+   build, then fast into the burst. The fast leg is delayed by the slow
+   leg's length and only fills forwards, so it doesn't override the slow
+   leg until it actually starts. */
+.egg-star {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  /* Laid out at its full final size and only ever scaled down from it —
+     see EasterEggOverlay.tsx for why. */
+  width: var(--egg-star-size);
+  height: var(--egg-star-size);
+  margin: calc(var(--egg-star-size) / -2) 0 0 calc(var(--egg-star-size) / -2);
+  animation:
+    egg-star-grow-slow var(--egg-star-slow) ease-out both,
+    egg-star-grow-fast var(--egg-star-fast) ease-in var(--egg-star-slow) forwards;
+}
+
+@keyframes egg-star-grow-slow {
+  0% {
+    opacity: 0;
+    transform: scale(var(--egg-star-start));
+  }
+  6% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: scale(var(--egg-star-mid));
+  }
+}
+
+/* Up to full size: about half the screen, tip to tip. */
+@keyframes egg-star-grow-fast {
+  from {
+    opacity: 1;
+    transform: scale(var(--egg-star-mid));
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Scaled from JS with the song's bass (see EasterEggOverlay.tsx) — its
+   own layer, so those per-frame scale changes don't redraw it. */
+.egg-star-pulse {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  will-change: transform;
+}
+
+/* Soft light pooling around the star — doesn't spin, so it's a steady
+   glow rather than one that wobbles with the points. */
+.egg-star-halo {
+  position: absolute;
+  inset: -15%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.55) 0%,
+    rgba(235, 242, 255, 0.22) 20%,
+    rgba(220, 232, 255, 0.07) 42%,
+    transparent 66%
+  );
+}
+
+.egg-star-spin {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  /* The fast leg's curve starts at about the slow leg's speed and ends
+     4x steeper than its average — see the speed constants in
+     EasterEggOverlay.tsx before changing it. */
+  animation:
+    egg-star-spin-slow var(--egg-star-slow) linear both,
+    egg-star-spin-fast var(--egg-star-fast) cubic-bezier(0.5, 0.045, 0.75, 0)
+      var(--egg-star-slow) forwards;
+}
+
+@keyframes egg-star-spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(var(--egg-spin-slow-end));
+  }
+}
+
+@keyframes egg-star-spin-fast {
+  from {
+    transform: rotate(var(--egg-spin-slow-end));
+  }
+  to {
+    transform: rotate(var(--egg-spin-fast-end));
+  }
+}
+
+/* The glow is the SVG's own filter (see EasterEggOverlay.tsx). */
+.egg-star-shape {
+  display: block;
+  width: 100%;
+  height: 100%;
+  fill: #fff;
+}
+
+/* ---- explode: burst, flash, fade out over the dark site ---- */
+
+.egg-overlay--explode .egg-void {
+  animation: egg-fade-out calc(var(--egg-explode) - var(--egg-theme-switch)) ease-out
+    var(--egg-theme-switch) both;
+}
+
+.egg-overlay--explode .egg-star {
+  animation: egg-star-burst 0.35s ease-in both;
+}
+
+.egg-overlay--explode .egg-star-spin {
+  animation: egg-star-burst-spin var(--egg-spin-burst) linear infinite;
+}
+
+@keyframes egg-star-burst {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(2.5);
+  }
+}
+
+@keyframes egg-star-burst-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Peaks right at --egg-theme-switch, covering the light→dark swap. */
+.egg-flash {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle, #fff 0%, rgba(255, 255, 255, 0.85) 35%, transparent 75%);
+  animation: egg-flash var(--egg-explode) ease-out both;
+}
+
+@keyframes egg-flash {
+  0% {
+    opacity: 0;
+  }
+  17% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes egg-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* No spinning star or burst — the build-up is the blackout and the
+     captions until the drop. */
+  .egg-star,
+  .egg-flash {
+    display: none;
+  }
+
+  /* The global reduced-motion rules squash every animation and delay to
+     ~0, which would flash all the captions at once. These are plain
+     fades, so they keep their real timing — !important on a class
+     outranks the global rule's on `*`. */
+  .egg-caption {
+    animation-name: egg-caption-fade-in, egg-fade-out !important;
+    animation-duration: 1s, 1s !important;
+    animation-delay: var(--egg-caption-in), var(--egg-caption-out) !important;
+  }
+}
+
+@keyframes egg-caption-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

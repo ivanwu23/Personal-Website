@@ -35,6 +35,26 @@
   box-shadow: 0 0 6px 1px rgba(130, 130, 130, 0.45);
 }
 
+/* Easter egg (see src/easter-egg/): a bright tail in this star's hue,
+   shifting slightly along its length, with a glowing head. */
+.shooting-star--rainbow {
+  height: 3px;
+  animation-name: shooting-star-move-bright;
+  background: linear-gradient(
+    90deg,
+    hsla(var(--hue), 100%, 60%, 0) 0%,
+    hsla(calc(var(--hue) + 40), 100%, 62%, 0.7) 70%,
+    hsla(calc(var(--hue) + 60), 100%, 70%, 1) 100%
+  );
+}
+
+.shooting-star--rainbow::after {
+  width: 6px;
+  height: 6px;
+  background: hsl(calc(var(--hue) + 60), 100%, 85%);
+  box-shadow: 0 0 10px 3px hsla(calc(var(--hue) + 60), 100%, 65%, 0.8);
+}
+
 /* translateX runs along the rotated axis, so one value carries the streak
    top-left to bottom-right at the given slight downward angle. */
 @keyframes shooting-star-move {
@@ -47,6 +67,25 @@
   }
   85% {
     opacity: 0.5;
+  }
+  100% {
+    transform: rotate(var(--angle, 15deg)) translateX(65vw);
+    opacity: 0;
+  }
+}
+
+/* Same flight, at full brightness — 0.5 reads as dim gray on the dark
+   theme. */
+@keyframes shooting-star-move-bright {
+  0% {
+    transform: rotate(var(--angle, 15deg)) translateX(-45vw);
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.95;
+  }
+  85% {
+    opacity: 0.95;
   }
   100% {
     transform: rotate(var(--angle, 15deg)) translateX(65vw);

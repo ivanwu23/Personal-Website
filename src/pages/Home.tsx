@@ -10,7 +10,17 @@ import {
   hasShownLoadingScreen,
   markLoadingScreenShown,
 } from '../data/intro'
+import { useEasterEgg } from '../easter-egg/EasterEggContext'
+import { useHoldTrigger } from '../easter-egg/useHoldTrigger'
+import { useBeatScale } from '../easter-egg/useBeatScale'
+import { unlockAudio } from '../easter-egg/audio'
+import { HOLD_DURATION } from '../easter-egg/timeline'
 import './Home.css'
+
+// How much the name and the stars swell with the bass in the easter
+// egg's party mode — kept slight; the stars, being small, by more.
+const NAME_BEAT_SCALE = 0.04
+const STAR_BEAT_SCALE = 0.12
 
 // How far the stars drift from their resting spot, in pixels. Kept small
 // and paired with a base position near the screen edges so their travel
@@ -21,7 +31,27 @@ const STAR_DRIFT_Y = 16
 export default function Home() {
   const starLeftRef = useRef<HTMLDivElement>(null)
   const starRightRef = useRef<HTMLDivElement>(null)
+  const nameRef = useRef<HTMLHeadingElement>(null)
   const [loading, setLoading] = useState(() => !hasShownLoadingScreen())
+
+  // The easter egg: hold the right-hand star (see src/easter-egg/).
+  // Deliberately gives no feedback until the hold completes.
+  const { trigger, isDark, analyser } = useEasterEgg()
+  const holdHandlers = useHoldTrigger({
+    duration: HOLD_DURATION,
+    onPressStart: unlockAudio,
+    onHold: trigger,
+  })
+
+  // In party mode, the name and both stars pulse with the music.
+  useBeatScale(
+    [
+      { ref: nameRef, strength: NAME_BEAT_SCALE },
+      { ref: starLeftRef, strength: STAR_BEAT_SCALE },
+      { ref: starRightRef, strength: STAR_BEAT_SCALE },
+    ],
+    isDark ? analyser : null,
+  )
 
   useEffect(() => {
     if (hasShownLoadingScreen()) return
@@ -76,12 +106,17 @@ export default function Home() {
       <div ref={starLeftRef} className="home-star home-star-left" aria-hidden="true">
         <div className="home-star-icon" />
       </div>
-      <div ref={starRightRef} className="home-star home-star-right" aria-hidden="true">
+      <div
+        ref={starRightRef}
+        className="home-star home-star-right"
+        aria-hidden="true"
+        {...holdHandlers}
+      >
         <div className="home-star-icon" />
       </div>
 
       <div className="home-hero">
-        <h1 className="home-name">{NAME}</h1>
+        <h1 ref={nameRef} className="home-name">{NAME}</h1>
         <p className="home-tagline">{TAGLINE}</p>
       </div>
 

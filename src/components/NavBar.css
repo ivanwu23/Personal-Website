@@ -8,12 +8,12 @@
   align-items: center;
   padding: 6px;
   border-radius: 999px;
-  /* Same color as --paper-dim, translucent so the blur behind it reads
-     through instead of hiding it. */
-  background: rgba(236, 233, 225, 0.72);
+  /* --paper-dim, translucent so the blur behind it reads through
+     instead of hiding it. */
+  background: var(--navbar-bg);
   -webkit-backdrop-filter: blur(14px);
   border: 1px solid var(--line);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 24px var(--navbar-shadow);
 }
 
 /* In its own rule (rather than alongside -webkit-backdrop-filter above)
@@ -69,7 +69,7 @@
 .navbar-link:hover,
 .navbar-link:focus-visible {
   opacity: 1;
-  background: rgba(0, 0, 0, 0.06);
+  background: var(--hover-tint);
 }
 
 .navbar-link.is-active {

@@ -8,10 +8,13 @@ import ScrollHint from './components/ScrollHint'
 import ScrollToTop from './components/ScrollToTop'
 import RequireNavAccess from './components/RequireNavAccess'
 import Footer from './components/Footer'
+import EasterEggProvider from './easter-egg/EasterEggProvider'
+import EasterEggOverlay from './easter-egg/EasterEggOverlay'
+import SoundBar from './easter-egg/SoundBar'
 
 function App() {
   return (
-    <>
+    <EasterEggProvider>
       <ScrollToTop />
       <Routes>
         {/* Every page stacked on one scroll — see Preview.tsx. */}
@@ -55,7 +58,9 @@ function App() {
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       <ScrollHint />
-    </>
+      <SoundBar />
+      <EasterEggOverlay />
+    </EasterEggProvider>
   )
 }
 

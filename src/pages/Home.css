@@ -60,7 +60,7 @@
 .home-star-icon {
   width: 100%;
   height: 100%;
-  background-color: #b5b5b5;
+  background-color: var(--star-color);
   -webkit-mask-image: url('/Star.png');
   mask-image: url('/Star.png');
   -webkit-mask-size: contain;
@@ -79,6 +79,24 @@
 .home-star-right {
   top: 60%;
   right: clamp(20px, 9vw, 140px);
+  /* Pressable for the easter egg (see src/easter-egg/) — the only star
+     that is. Above .home-hero (z-index 10), whose full-width box can
+     reach down over it on short screens. No pointer cursor or hover
+     state: it's meant to be found, not advertised. */
+  z-index: 11;
+  pointer-events: auto;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* The star itself is small (32–52px) — pads the pressable area around it
+   so a hold doesn't have to land precisely on it. */
+.home-star-right::before {
+  content: '';
+  position: absolute;
+  inset: -16px;
 }
 
 @keyframes star-fade-in {
@@ -111,7 +129,7 @@
   color: var(--ink);
   /* Solid, unblurred gray duplicate sitting just behind the black
      type — a hard offset, not a soft drop shadow. */
-  text-shadow: 0 8px 0 #a3a3a3;
+  text-shadow: 0 8px 0 var(--name-shadow);
   margin: 0;
 }
 
@@ -153,4 +171,80 @@
     opacity: 0.65;
     transform: translateY(0);
   }
+}
+
+/* ---- Easter egg dark theme (see src/easter-egg/) ---- */
+
+/* Moonlit snow rather than an inverted photo — only dimmed a little,
+   since the rainbow multiplied over it below darkens it further. */
+:root[data-theme='dark'] .home-mountain-img {
+  filter: grayscale(1) contrast(1.05) brightness(0.8);
+}
+
+/* A sliding rainbow multiplied over the mountain: the snow takes on the
+   color, the dark rock stays dark. Masked to the mountain's own shape
+   (sized and placed like the img's object-fit: cover) so the sky above
+   it stays clear. .home-mountain's slide-up transform makes it its own
+   stacking context, so the blend only mixes with the mountain photo. */
+:root[data-theme='dark'] .home-mountain::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: linear-gradient(
+    90deg,
+    #ff4d4d,
+    #ffa62b,
+    #ffe94d,
+    #4dff7a,
+    #4dd2ff,
+    #7a5cff,
+    #e05cff,
+    #ff4d4d
+  );
+  background-size: 200% 100%;
+  animation: rainbow-slide 8s linear infinite;
+  mix-blend-mode: multiply;
+  -webkit-mask: url('/mountain.png') center / cover no-repeat;
+  mask: url('/mountain.png') center / cover no-repeat;
+}
+
+/* Rainbow like the name: the same sliding gradient as the dark-theme
+   headings (rainbow-slide, in index.css), seen through the star mask. */
+:root[data-theme='dark'] .home-star-icon {
+  background-image: linear-gradient(
+    90deg,
+    #ff4d4d,
+    #ffa62b,
+    #ffe94d,
+    #4dff7a,
+    #4dd2ff,
+    #7a5cff,
+    #e05cff,
+    #ff4d4d
+  );
+  background-size: 200% 100%;
+  animation: rainbow-slide 4s linear infinite;
+}
+
+/* On the star's wrapper, not the icon: the icon's mask is applied after
+   its filter, which would cut the glow away. */
+:root[data-theme='dark'] .home--intro .home-star {
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.35));
+  /* Full strength rather than the light theme's 0.7 — its fade-in
+     (long finished by now) holds that 0.7, so it's replaced outright. */
+  animation: none;
+  opacity: 1;
+}
+
+/* The name's text is a clipped rainbow gradient in the dark theme (see
+   index.css), and a text-shadow would paint over it — drop-shadow
+   follows the gradient text's shape instead. */
+:root[data-theme='dark'] .home-name {
+  text-shadow: none;
+  filter: drop-shadow(0 8px 0 var(--name-shadow));
+}
+
+:root[data-theme='dark'] .home-tagline {
+  opacity: 1;
 }

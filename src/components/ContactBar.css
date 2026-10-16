@@ -117,3 +117,9 @@
     }
   }
 }
+
+/* The icons are black PNGs, which vanish on the easter egg's dark theme
+   (see src/easter-egg/) — flipped to white there. */
+:root[data-theme='dark'] .contact-icon {
+  filter: invert(1);
+}

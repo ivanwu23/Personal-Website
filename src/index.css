@@ -5,6 +5,14 @@
   --line: #ddd9cf;
   --accent: #d99a3c;
 
+  /* Smaller one-off colors, tokenized so the dark theme below can swap
+     them along with everything else. */
+  --navbar-bg: rgba(236, 233, 225, 0.72); /* --paper-dim, translucent */
+  --navbar-shadow: rgba(0, 0, 0, 0.08);
+  --hover-tint: rgba(0, 0, 0, 0.06);
+  --star-color: #b5b5b5;
+  --name-shadow: #a3a3a3;
+
   --display: 'Big Shoulders Display', 'Arial Narrow', sans-serif;
   --font-name: 'Reem Kufi Fun', 'Big Shoulders Display', sans-serif;
   --sans: 'Work Sans', system-ui, 'Segoe UI', sans-serif;
@@ -20,6 +28,81 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* The easter egg's dark "party" theme (see src/easter-egg/) — never on
+   unless that's been triggered, which is why the light theme above
+   doesn't otherwise follow the OS setting. */
+:root[data-theme='dark'] {
+  --ink: #f2f2f5;
+  --paper: #0a0a10;
+  --paper-dim: #17171f;
+  --line: #2a2a36;
+  --accent: #f0b45c;
+
+  --navbar-bg: rgba(23, 23, 31, 0.72);
+  --navbar-shadow: rgba(0, 0, 0, 0.5);
+  --hover-tint: rgba(255, 255, 255, 0.08);
+  --star-color: #d4d4e4;
+  --name-shadow: #2e2e3c;
+
+  color-scheme: dark;
+}
+
+/* Rainbow headings in the dark theme: a hue gradient clipped to the text
+   and slid sideways forever. Applied to every heading set in the name
+   font. */
+:root[data-theme='dark']
+  :is(
+    .home-name,
+    .home-tagline,
+    .about-title,
+    .about-point-title,
+    .about-behind-title,
+    .about-behind-card-title,
+    .resume-title,
+    .projects-title,
+    .project-modal-title,
+    .contact-title,
+    .site-footer-name
+  ) {
+  background-image: linear-gradient(
+    90deg,
+    #ff4d4d,
+    #ffa62b,
+    #ffe94d,
+    #4dff7a,
+    #4dd2ff,
+    #7a5cff,
+    #e05cff,
+    #ff4d4d
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation-name: rainbow-slide;
+  animation-duration: 4s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+/* The rule above takes over `animation`, so the Projects title's swap
+   animation has to be restated alongside the rainbow to keep playing. */
+:root[data-theme='dark'] .projects-title.is-swapping {
+  animation:
+    rainbow-slide 4s linear infinite,
+    projects-text-swap 0.35s var(--ease-out-expo) both;
+}
+
+@keyframes rainbow-slide {
+  from {
+    background-position: 0% 0;
+  }
+  to {
+    background-position: 200% 0;
+  }
 }
 
 * {
