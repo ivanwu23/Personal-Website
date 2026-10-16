@@ -35,24 +35,42 @@
   box-shadow: 0 0 6px 1px rgba(130, 130, 130, 0.45);
 }
 
-/* Easter egg (see src/easter-egg/): a bright tail in this star's hue,
-   shifting slightly along its length, with a glowing head. */
-.shooting-star--rainbow {
-  height: 3px;
+/* Easter egg (see src/easter-egg/): a small 4-point star — the same
+   needle-tipped shape as the spinning star in EasterEggOverlay.tsx's
+   STAR_PATH — rather than the usual streak-and-dot, in red or white
+   (set by the --egg-red/--white variant class), with --brightness (see
+   ShootingStars.tsx) varying the glow and opacity so some read brighter
+   than others. A mask-image (matching the technique already used for
+   the home stars in Home.css) rather than a drawn shape, so it's cheap
+   to repaint for however many of these are ever on screen at once in
+   party mode. */
+.shooting-star--egg {
+  width: clamp(10px, 1.6vw, 20px);
+  height: clamp(10px, 1.6vw, 20px);
+  border-radius: 0;
+  background: var(--egg-star-tint);
+  /* Not opacity here — the flight keyframe below drives that (reading
+     --brightness itself), since it's already animating the property. */
+  filter: drop-shadow(0 0 calc(var(--brightness, 1) * 8px) var(--egg-star-tint));
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23000' d='M50 0 C53 37 63 47 100 50 C63 53 53 63 50 100 C47 63 37 53 0 50 C37 47 47 37 50 0 Z'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23000' d='M50 0 C53 37 63 47 100 50 C63 53 53 63 50 100 C47 63 37 53 0 50 C37 47 47 37 50 0 Z'/%3E%3C/svg%3E");
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
   animation-name: shooting-star-move-bright;
-  background: linear-gradient(
-    90deg,
-    hsla(var(--hue), 100%, 60%, 0) 0%,
-    hsla(calc(var(--hue) + 40), 100%, 62%, 0.7) 70%,
-    hsla(calc(var(--hue) + 60), 100%, 70%, 1) 100%
-  );
 }
 
-.shooting-star--rainbow::after {
-  width: 6px;
-  height: 6px;
-  background: hsl(calc(var(--hue) + 60), 100%, 85%);
-  box-shadow: 0 0 10px 3px hsla(calc(var(--hue) + 60), 100%, 65%, 0.8);
+.shooting-star--egg::after {
+  content: none;
+}
+
+.shooting-star--red {
+  --egg-star-tint: var(--egg-red);
+}
+
+.shooting-star--white {
+  --egg-star-tint: #fff;
 }
 
 /* translateX runs along the rotated axis, so one value carries the streak
@@ -74,18 +92,19 @@
   }
 }
 
-/* Same flight, at full brightness — 0.5 reads as dim gray on the dark
-   theme. */
+/* Same flight, for the easter egg's red/white stars — peak opacity
+   scales with each star's own --brightness (see ShootingStars.tsx), so
+   some read clearly brighter than others mid-flight. */
 @keyframes shooting-star-move-bright {
   0% {
     transform: rotate(var(--angle, 15deg)) translateX(-45vw);
     opacity: 0;
   }
   12% {
-    opacity: 0.95;
+    opacity: calc(var(--brightness, 1) * 0.95);
   }
   85% {
-    opacity: 0.95;
+    opacity: calc(var(--brightness, 1) * 0.95);
   }
   100% {
     transform: rotate(var(--angle, 15deg)) translateX(65vw);

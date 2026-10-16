@@ -11,22 +11,25 @@ type Star = {
   angle: number
   /** Flight time in milliseconds. */
   duration: number
-  /** Rainbow tint (see Mode below); null = the usual gray. */
-  hue: number | null
+  /** Easter egg only (see Mode below); null = the usual gray streak. */
+  variant: 'red' | 'white' | null
+  /** How strong this particular star's glow/opacity is, so some read
+   *  brighter than others — only meaningful alongside `variant`. */
+  brightness: number
 }
 
 // How the stars look and how often they fly:
 // normal  the usual gray streaks every few seconds
 // party   the easter egg's party mode (see src/easter-egg/): a
-//         near-constant shower of fast rainbow streaks
-// intro   a few rainbow streaks crossing the easter egg's black screen
+//         near-constant shower of fast red/white 4-point stars
+// intro   a few red/white stars crossing the easter egg's black screen
 //         before its captions
 type Mode = {
   minGap: number
   maxGap: number
   /** Delay before the first streak. */
   firstDelay: () => number
-  rainbow: boolean
+  isEgg: boolean
   fast: boolean
 }
 
@@ -37,17 +40,17 @@ const MODES = {
     minGap: 1800,
     maxGap: 3800,
     firstDelay: () => 600 + Math.random() * 1600,
-    rainbow: false,
+    isEgg: false,
     fast: false,
   },
   // Kicks off right away, so the shower is already going as the burst
   // clears.
-  party: { minGap: 35, maxGap: 100, firstDelay: () => 0, rainbow: true, fast: true },
+  party: { minGap: 35, maxGap: 100, firstDelay: () => 0, isEgg: true, fast: true },
   intro: {
     minGap: 1000,
     maxGap: 2400,
     firstDelay: () => 400,
-    rainbow: true,
+    isEgg: true,
     fast: false,
   },
 } satisfies Record<string, Mode>
@@ -58,8 +61,14 @@ function makeStar(mode: Mode): Star {
     top: -8 + Math.random() * 32,
     left: -8 + Math.random() * 30,
     angle: 12 + Math.random() * 6,
-    duration: mode.fast ? 500 + Math.random() * 350 : 900 + Math.random() * 600,
-    hue: mode.rainbow ? Math.floor(Math.random() * 360) : null,
+    // A wide spread (flight time is inverse to on-screen speed), so a
+    // given batch clearly mixes somewhat-slow streaks with fast ones
+    // rather than all crossing at roughly the same pace.
+    duration: mode.fast ? 350 + Math.random() * 850 : 700 + Math.random() * 1300,
+    variant: mode.isEgg ? (Math.random() < 0.5 ? 'red' : 'white') : null,
+    // A wide-ish range so the dimmest and brightest in a shower are
+    // clearly different, without any going fully dark.
+    brightness: mode.isEgg ? 0.55 + Math.random() * 0.45 : 1,
   }
 }
 
@@ -111,13 +120,17 @@ export default function ShootingStars({ intro = false }: { intro?: boolean }) {
       {stars.map((star) => (
         <span
           key={star.id}
-          className={star.hue === null ? 'shooting-star' : 'shooting-star shooting-star--rainbow'}
+          className={
+            star.variant === null
+              ? 'shooting-star'
+              : `shooting-star shooting-star--egg shooting-star--${star.variant}`
+          }
           style={{
             top: `${star.top}%`,
             left: `${star.left}%`,
             animationDuration: `${star.duration}ms`,
             ['--angle' as string]: `${star.angle}deg`,
-            ...(star.hue !== null && { ['--hue' as string]: star.hue }),
+            ...(star.variant !== null && { ['--brightness' as string]: star.brightness }),
           }}
           onAnimationEnd={() => removeStar(star.id)}
         />

@@ -1,31 +1,73 @@
+/* An equalizer in its own right (red, same per-bar levels — see
+   SoundBar.tsx), sitting behind .soundbar (lower z-index) at a taller
+   height — .soundbar itself is shorter, so this one's bars show past
+   its edges and tips on every side, reading as a backdrop the white
+   strip sits in front of rather than something it merely peaks past.
+   Same layout as .soundbar below (flex row, same gap/padding/bar
+   count), so the two strips' bars line up in the same columns. */
+.soundbar-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 34;
+  display: flex;
+  gap: 2px;
+  height: 150px;
+  padding: 0 2px;
+  pointer-events: none;
+  animation: soundbar-drop 0.6s var(--ease-out-expo) both;
+}
+
+.soundbar-backdrop-bar {
+  flex: 1;
+  height: 100%;
+  border-radius: 0 0 999px 999px;
+  background: var(--egg-red);
+  transform-origin: top;
+  /* About MIN_PX in SoundBar.tsx, until the first frame sets it. */
+  transform: scaleY(0.008);
+  opacity: 0.95;
+  box-shadow: 0 0 10px var(--egg-red);
+}
+
 .soundbar {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  /* Just under the nav pill (z-index 40), which floats over it. */
+  /* Under the nav pill (z-index 40), which floats over it; above
+     .soundbar-backdrop (34). */
   z-index: 35;
   display: flex;
   gap: 2px;
+  /* ~15% shorter than .soundbar-backdrop, on purpose — see above. */
   height: 130px;
   padding: 0 2px;
   pointer-events: none;
-  /* Slowly cycles the whole strip's colors on top of the per-bar hues. */
-  animation:
-    soundbar-drop 0.6s var(--ease-out-expo) both,
-    soundbar-hue 8s linear infinite;
+  animation: soundbar-drop 0.6s var(--ease-out-expo) both;
+}
+
+/* Applied once Home (where the trigger star lives) has scrolled out of
+   view — see SoundBar.tsx. Same top:0, but now the document's rather
+   than the viewport's, so both strips just stay put at the top of the
+   page instead of continuing to float over whatever's scrolled into
+   view after Home. */
+.soundbar-backdrop.is-released,
+.soundbar.is-released {
+  position: absolute;
 }
 
 .soundbar-bar {
   flex: 1;
   height: 100%;
   border-radius: 0 0 999px 999px;
-  background: currentColor;
+  background: #fff;
   transform-origin: top;
   /* About MIN_PX in SoundBar.tsx, until the first frame sets it. */
   transform: scaleY(0.008);
   opacity: 0.9;
-  box-shadow: 0 0 10px currentColor;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
 }
 
 @keyframes soundbar-drop {
@@ -34,15 +76,6 @@
   }
   to {
     translate: 0 0;
-  }
-}
-
-@keyframes soundbar-hue {
-  from {
-    filter: hue-rotate(0deg);
-  }
-  to {
-    filter: hue-rotate(360deg);
   }
 }
 
@@ -88,6 +121,10 @@
 /* The nav pill nearly fills the width on phones — drop the button
    below it instead of under it. */
 @media (max-width: 640px) {
+  .soundbar-backdrop {
+    height: 92px;
+  }
+
   .soundbar {
     height: 80px;
   }

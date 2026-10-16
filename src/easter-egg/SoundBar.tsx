@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useEasterEgg } from './EasterEggContext'
 import { isMusicPlaying } from './audio'
 import './SoundBar.css'
@@ -26,14 +26,38 @@ const BAR_BINS = Array.from({ length: BAR_COUNT }, (_, i) => {
   return [lo, hi] as const
 })
 
-// The rainbow strip along the top of the page in party mode, moving to
-// the music. Each frame writes straight to the bars' transforms through
-// refs instead of through React state, so it's not re-rendering 64
-// elements sixty times a second. (requestAnimationFrame already stops on
-// its own in a background tab.)
+// Two equalizer strips in party mode, moving to the music: a white one
+// (.soundbar) and a taller, red one behind it (.soundbar-backdrop — see
+// SoundBar.css) that shows past its edges and tips on every side, like
+// a backdrop the white strip sits in front of. Both read the same
+// per-bar levels each frame, written straight to their transforms
+// through refs instead of through React state, so it's not re-rendering
+// 128 elements sixty times a second. (requestAnimationFrame already
+// stops on its own in a background tab.)
 export default function SoundBar() {
   const { phase, isDark, analyser, exit } = useEasterEgg()
   const barsRef = useRef<(HTMLSpanElement | null)[]>([])
+  const backdropBarsRef = useRef<(HTMLSpanElement | null)[]>([])
+  // Fixed (locked to the viewport) only while the Home section is still
+  // in view — Preview.tsx stacks every page on one scroll, and the
+  // trigger star lives on Home, so that's "the home page" here. Once
+  // it's scrolled past, both strips switch to absolute (see
+  // SoundBar.css): same top:0, but now relative to the document rather
+  // than the viewport, so they just stay put at the top of the page and
+  // scroll out of view with the rest of Home instead of continuing to
+  // float over whatever's scrolled into view after it.
+  const [isHomeInView, setIsHomeInView] = useState(true)
+
+  useEffect(() => {
+    if (!isDark) return
+    const home = document.getElementById('home')
+    if (!home) return
+    const observer = new IntersectionObserver(([entry]) => setIsHomeInView(entry.isIntersecting), {
+      threshold: 0,
+    })
+    observer.observe(home)
+    return () => observer.disconnect()
+  }, [isDark])
 
   useEffect(() => {
     if (!isDark) return
@@ -43,7 +67,10 @@ export default function SoundBar() {
     function tick(now: number) {
       // Bars scale down from the strip's full height, so the resting
       // height as a fraction of it. Read each frame since the max height
-      // changes at the mobile breakpoint.
+      // changes at the mobile breakpoint. Both strips share this one
+      // scale — the backdrop's own resting height ends up a touch over
+      // MIN_PX, since it's the white strip's (shorter) height this is
+      // computed against, but that's not worth a second calculation.
       const maxPx = barsRef.current[0]?.offsetHeight || 1
       const minScale = Math.min(1, MIN_PX / maxPx)
       const live = analyser && data && isMusicPlaying()
@@ -61,8 +88,11 @@ export default function SoundBar() {
           level = 0.25 + 0.15 * Math.sin(now * 0.003 + i * 0.35)
         }
         const scale = minScale + (1 - minScale) * level
+        const transform = `scaleY(${scale.toFixed(3)})`
         const bar = barsRef.current[i]
-        if (bar) bar.style.transform = `scaleY(${scale.toFixed(3)})`
+        if (bar) bar.style.transform = transform
+        const backdropBar = backdropBarsRef.current[i]
+        if (backdropBar) backdropBar.style.transform = transform
       }
       frame = requestAnimationFrame(tick)
     }
@@ -76,18 +106,35 @@ export default function SoundBar() {
   return (
     <>
       {isDark && (
-        <div className="soundbar" aria-hidden="true">
-          {Array.from({ length: BAR_COUNT }, (_, i) => (
-            <span
-              key={i}
-              ref={(el) => {
-                barsRef.current[i] = el
-              }}
-              className="soundbar-bar"
-              style={{ color: `hsl(${(i / BAR_COUNT) * 360}, 95%, 62%)` }}
-            />
-          ))}
-        </div>
+        <>
+          {/* Taller than .soundbar itself (see SoundBar.css) — shows
+              past its edges and tips, like a backdrop behind it. */}
+          <div
+            className={isHomeInView ? 'soundbar-backdrop' : 'soundbar-backdrop is-released'}
+            aria-hidden="true"
+          >
+            {Array.from({ length: BAR_COUNT }, (_, i) => (
+              <span
+                key={i}
+                ref={(el) => {
+                  backdropBarsRef.current[i] = el
+                }}
+                className="soundbar-backdrop-bar"
+              />
+            ))}
+          </div>
+          <div className={isHomeInView ? 'soundbar' : 'soundbar is-released'} aria-hidden="true">
+            {Array.from({ length: BAR_COUNT }, (_, i) => (
+              <span
+                key={i}
+                ref={(el) => {
+                  barsRef.current[i] = el
+                }}
+                className="soundbar-bar"
+              />
+            ))}
+          </div>
+        </>
       )}
       {/* Up through the whole ~45s build-up too, not just party mode —
           there should always be a way back out of a black screen. */}

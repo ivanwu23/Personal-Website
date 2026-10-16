@@ -12,6 +12,13 @@
   --hover-tint: rgba(0, 0, 0, 0.06);
   --star-color: #b5b5b5;
   --name-shadow: #a3a3a3;
+  /* The easter egg's one accent color (see src/easter-egg/) — shared by
+     the party name's hard-offset shadow, the rainbow shooting stars'
+     red variant, and the sound bar's backdrop. Defined here rather than
+     under the dark theme below: the intro shooting stars (and captions)
+     play *before* data-theme flips to 'dark' (see EasterEggProvider's
+     timeline), so anything they use has to resolve regardless of theme. */
+  --egg-red: #ff3b30;
 
   --display: 'Big Shoulders Display', 'Arial Narrow', sans-serif;
   --font-name: 'Reem Kufi Fun', 'Big Shoulders Display', sans-serif;
@@ -43,67 +50,19 @@
   --navbar-bg: rgba(23, 23, 31, 0.72);
   --navbar-shadow: rgba(0, 0, 0, 0.5);
   --hover-tint: rgba(255, 255, 255, 0.08);
-  --star-color: #d4d4e4;
-  --name-shadow: #2e2e3c;
+  /* Plain white, not the party theme's rainbow — the two home stars sit
+     right next to the name and read better as a clean accent. */
+  --star-color: #ffffff;
+  /* Was a plain gray — now --egg-red (defined above, theme-independent). */
+  --name-shadow: var(--egg-red);
 
   color-scheme: dark;
 }
 
-/* Rainbow headings in the dark theme: a hue gradient clipped to the text
-   and slid sideways forever. Applied to every heading set in the name
-   font. */
-:root[data-theme='dark']
-  :is(
-    .home-name,
-    .home-tagline,
-    .about-title,
-    .about-point-title,
-    .about-behind-title,
-    .about-behind-card-title,
-    .resume-title,
-    .projects-title,
-    .project-modal-title,
-    .contact-title,
-    .site-footer-name
-  ) {
-  background-image: linear-gradient(
-    90deg,
-    #ff4d4d,
-    #ffa62b,
-    #ffe94d,
-    #4dff7a,
-    #4dd2ff,
-    #7a5cff,
-    #e05cff,
-    #ff4d4d
-  );
-  background-size: 200% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: transparent;
-  animation-name: rainbow-slide;
-  animation-duration: 4s;
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
-}
-
-/* The rule above takes over `animation`, so the Projects title's swap
-   animation has to be restated alongside the rainbow to keep playing. */
-:root[data-theme='dark'] .projects-title.is-swapping {
-  animation:
-    rainbow-slide 4s linear infinite,
-    projects-text-swap 0.35s var(--ease-out-expo) both;
-}
-
-@keyframes rainbow-slide {
-  from {
-    background-position: 0% 0;
-  }
-  to {
-    background-position: 200% 0;
-  }
-}
+/* Headings, the mountain, and the two home stars were all a sliding
+   rainbow gradient in the dark theme at one point — all three are
+   plain colors now (see Home.css for the mountain/stars), so there's
+   nothing left here to override at all. */
 
 * {
   box-sizing: border-box;
