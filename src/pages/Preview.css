@@ -1,0 +1,34 @@
+.preview-stack {
+  /* Each page's own layout (fixed NavBar/ContactBar, 100svh sections,
+     etc.) is untouched — this just stacks them in normal document flow. */
+  display: flex;
+  flex-direction: column;
+}
+
+.preview-section {
+  /* Clears the floating nav pill when NavBar scrolls a section into
+     view, so the label (and the page content right under it) doesn't
+     land tucked behind it. */
+  scroll-margin-top: 100px;
+}
+
+/* visibility (not display: none) — keeps the section's layout space
+   reserved so the page's total scrollable height is accurate from the
+   start, instead of growing as each section reveals and throwing off
+   scroll math (and the scroll-into-view math NavBar relies on). */
+.preview-section--hidden {
+  visibility: hidden;
+}
+
+.preview-label {
+  position: relative;
+  z-index: 100;
+  padding: 6px 14px;
+  background: #ff3b30;
+  color: #fff;
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}

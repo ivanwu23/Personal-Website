@@ -4,6 +4,7 @@ import About from './pages/About'
 import Resume from './pages/Resume'
 import Projects from './pages/Projects'
 import Contact from './pages/Contact'
+import Preview from './pages/Preview'
 import ScrollHint from './components/ScrollHint'
 import ScrollToTop from './components/ScrollToTop'
 import RequireNavAccess from './components/RequireNavAccess'
@@ -51,6 +52,8 @@ function App() {
             </RequireNavAccess>
           }
         />
+        {/* Dev-only, not in NAV_LINKS/RequireNavAccess — see Preview.tsx. */}
+        <Route path="/preview" element={<Preview />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       <ScrollHint />
