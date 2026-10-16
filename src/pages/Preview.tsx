@@ -7,16 +7,21 @@ import Resume from './Resume'
 import Projects from './Projects'
 import Contact from './Contact'
 import Footer from '../components/Footer'
+import NavBar from '../components/NavBar'
+import ContactBar from '../components/ContactBar'
+import { SharedBarsContext } from '../components/SharedBars'
+import { INTRO_DURATION, LOADING_DURATION, hasShownLoadingScreen } from '../data/intro'
 import './Preview.css'
 
 // The site's single real page ("/"): every page stacked on one
 // scrollable view instead of separate routes you navigate between. Each
-// is rendered exactly as it normally is — own NavBar/ContactBar
-// included — so nothing about how they work changed, there's just
-// several of them down the page instead of one. Only the Footer is
-// deliberately not repeated per page here (see bottom of this file)
-// since on a single continuous scroll it just reads as the same footer
-// popping up four times rather than "the end of the page".
+// is rendered exactly as it normally is, so nothing about how they work
+// changed, there's just several of them down the page instead of one.
+// The exceptions are the Footer, NavBar and ContactBar, which are
+// deliberately not repeated per page here (see bottom of this file):
+// on a single continuous scroll the footer just reads as the same one
+// popping up four times rather than "the end of the page", and the two
+// fixed bars would pile up on the same spot (see SharedBars.ts).
 //
 // The ids here are what NavBar scroll-targets — see the `isSinglePage`
 // branch in NavBar.tsx — and must match NAV_LINKS' `to` paths (minus
@@ -95,7 +100,13 @@ function RevealSection({
         }
         isFirstCallback = false
       },
-      { threshold: 0 },
+      // The -1px bottom margin keeps a section sitting exactly at the
+      // fold (About's top lands right at the bottom of the 100svh Home)
+      // from counting as in view: IntersectionObserver treats a
+      // zero-area, edge-touching target as intersecting, so without it
+      // the first callback would reveal About as-is at load instead of
+      // replaying it once it's actually scrolled into view.
+      { threshold: 0, rootMargin: '0px 0px -1px 0px' },
     )
     observer.observe(el)
     return () => observer.disconnect()
@@ -115,13 +126,26 @@ function RevealSection({
 export default function Preview() {
   const [home, about, resume, projects, contact] = NAV_LINKS.map((link) => sectionId(link.to))
 
+  // Same timing Home's own bars use: come in once its intro finishes,
+  // plus the loading screen's length if that's still going to play
+  // first. Read once at mount, before Home's loading timer marks it seen.
+  const [barDelay] = useState(
+    () => (hasShownLoadingScreen() ? 0 : LOADING_DURATION / 1000) + INTRO_DURATION,
+  )
+
   return (
     <div className="preview-stack">
-      <RevealSection id={home} Component={Home} skipReveal />
-      <RevealSection id={about} Component={About} />
-      <RevealSection id={resume} Component={Resume} />
-      <RevealSection id={projects} Component={Projects} />
-      <RevealSection id={contact} Component={Contact} />
+      <SharedBarsContext.Provider value={true}>
+        <RevealSection id={home} Component={Home} skipReveal />
+        <RevealSection id={about} Component={About} />
+        <RevealSection id={resume} Component={Resume} />
+        <RevealSection id={projects} Component={Projects} />
+        <RevealSection id={contact} Component={Contact} />
+      </SharedBarsContext.Provider>
+
+      {/* One nav bar and contact bar for the whole stack, not one per page. */}
+      <NavBar delay={barDelay} />
+      <ContactBar delay={barDelay} />
 
       {/* One footer for the whole stack, not one per page. */}
       <Footer />

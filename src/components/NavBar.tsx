@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
+import { SharedBarsContext } from './SharedBars'
 import { NavLink, useLocation } from 'react-router-dom'
 import { NAV_LINKS } from '../data/site'
 import './NavBar.css'
@@ -48,9 +49,14 @@ export default function NavBar({ delay = 0 }: NavBarProps) {
   const [playIntro] = useState(() => !hasNavBarPlayed)
   const isSinglePage = useLocation().pathname === '/'
 
+  // Rendered once for the whole stack instead on "/" — see SharedBars.ts.
+  const isShared = useContext(SharedBarsContext)
+
   useEffect(() => {
-    hasNavBarPlayed = true
-  }, [])
+    if (!isShared) hasNavBarPlayed = true
+  }, [isShared])
+
+  if (isShared) return null
 
   return (
     <nav

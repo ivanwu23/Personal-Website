@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
+import { SharedBarsContext } from './SharedBars'
 import { CONTACT_LINKS } from '../data/site'
 import './ContactBar.css'
 
@@ -26,9 +27,14 @@ let hasContactBarPlayed = false
 export default function ContactBar({ delay = 0 }: ContactBarProps) {
   const [playIntro] = useState(() => !hasContactBarPlayed)
 
+  // Rendered once for the whole stack instead on "/" — see SharedBars.ts.
+  const isShared = useContext(SharedBarsContext)
+
   useEffect(() => {
-    hasContactBarPlayed = true
-  }, [])
+    if (!isShared) hasContactBarPlayed = true
+  }, [isShared])
+
+  if (isShared) return null
 
   return (
     <div className="contact-bar">
