@@ -34,7 +34,7 @@ export type Caption = {
  *  of the next one fading in. The first sits on its own out among the
  *  intro's shooting stars; the rest run back to back after them. */
 export const CAPTIONS: Caption[] = [
-  { text: 'Where am I?', in: 7, out: 12 },
+  { text: 'Camellia - Crystallized', in: 7, out: 12 },
   { text: 'Are you ready..', in: 20, out: 22.3 },
   { text: 'To turn the lights off?', in: 22.8, out: 25 },
   { text: `Made by: ${FULL_NAME}`, in: 25.5, out: 28 },
