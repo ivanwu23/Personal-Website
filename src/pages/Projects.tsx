@@ -405,12 +405,7 @@ export default function Projects() {
                   data-dom-index={domIndex}
                   onClick={() => onSlideClick(domIndex)}
                 >
-                  <img
-                    src={project.image}
-                    alt={project.title}
-                    draggable={false}
-                    className={project.needsShadow ? 'is-shadowless-source' : undefined}
-                  />
+                  <img src={project.image} alt={project.title} draggable={false} />
                   {peekClass && <div className="projects-slide-edge" aria-hidden="true" />}
                 </div>
               )

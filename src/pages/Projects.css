@@ -167,24 +167,6 @@
   pointer-events: none;
 }
 
-/* Most project mockup images already have a soft drop shadow baked into
-   their own transparent margin — PJ4 (UnGatekeep) doesn't, so this
-   reproduces one with a CSS filter instead. drop-shadow (rather than
-   box-shadow) follows the image's actual alpha silhouette, matching how
-   the baked-in ones hug the mockup window's shape instead of drawing a
-   shadow around the image's full rectangular bounds.
-   Unlike the baked-in ones, which have room to fade out inside their own
-   transparent canvas, this shadow paints outside the <img>'s own box —
-   and .projects-slide clips overflow, with nothing else reserving any
-   margin between the image's edge and that clip boundary. The max-width
-   trim below reserves a small margin for it to actually fit in, and the
-   blur stays tight enough to stay inside that margin instead of still
-   reaching the edge. */
-.projects-slide img.is-shadowless-source {
-  max-width: calc(100% - 20px);
-  filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.22));
-}
-
 /* A soft blur over the outer (far-from-center) edge of each peeking
    slide — the side actually receding out of view — fading to clear
    toward the middle, so the peek looks like it's dissolving off-screen

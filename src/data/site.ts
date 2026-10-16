@@ -137,10 +137,6 @@ export type Project = {
   subtitle: string
   image: string
   description: string
-  /** Set when `image` doesn't already have a drop shadow baked into its
-   *  own transparent margin (PJ1-PJ3 do; see Projects.css for the CSS
-   *  fallback this triggers). */
-  needsShadow?: boolean
 }
 
 // Shown in the carousel on the Projects page, left to right. Clicking the
@@ -175,7 +171,6 @@ export const PROJECTS: Project[] = [
     image: '/PJ4.png',
     description:
       'A full-stack community platform for sharing clothing finds and cheaper alternatives — post what you tracked down, or ask for help finding a similar (and more affordable) version of something you can’t.',
-    needsShadow: true,
   },
 ]
 
