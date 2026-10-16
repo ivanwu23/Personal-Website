@@ -9,34 +9,33 @@ import Contact from './Contact'
 import Footer from '../components/Footer'
 import './Preview.css'
 
-// Dev-only: every page stacked on one scrollable route so the whole site
-// can be eyeballed in a single pass instead of clicking through routes
-// one at a time. Each page is rendered exactly as it normally is — own
-// NavBar/ContactBar included — so nothing about how they work is changed,
-// there's just several of them down the page instead of one. Only the
-// Footer is deliberately not repeated per page here (see bottom of this
-// file) since on a single continuous scroll it just reads as the same
-// footer popping up four times rather than "the end of the page".
+// The site's single real page ("/"): every page stacked on one
+// scrollable view instead of separate routes you navigate between. Each
+// is rendered exactly as it normally is — own NavBar/ContactBar
+// included — so nothing about how they work changed, there's just
+// several of them down the page instead of one. Only the Footer is
+// deliberately not repeated per page here (see bottom of this file)
+// since on a single continuous scroll it just reads as the same footer
+// popping up four times rather than "the end of the page".
 //
-// The ids here are what NavBar scroll-targets when it detects it's being
-// rendered on this route — see the `isPreview` branch in NavBar.tsx —
-// and must match NAV_LINKS' `to` paths (minus the leading slash, "/" ->
-// "home") for that lookup to find them.
+// The ids here are what NavBar scroll-targets — see the `isSinglePage`
+// branch in NavBar.tsx — and must match NAV_LINKS' `to` paths (minus
+// the leading slash, "/" -> "home") for that lookup to find them.
 function sectionId(to: string): string {
   return to === '/' ? 'home' : to.slice(1)
 }
 
 // Each page's entrance animations (the hero sliding in, resume bubbles
-// revealing, etc.) are written to play on mount — correct for a normal
-// route, which only ever renders the one page you're navigating to. Here
-// all five mount together at the initial page load, so by the time you've
-// scrolled down to one, its animation already played off-screen before
-// you could see it.
+// revealing, etc.) are written to play on mount — correct for what each
+// one used to be, a standalone route you'd navigate to one at a time.
+// Here all five mount together at the initial page load, so by the time
+// you've scrolled down to one, its animation already played off-screen
+// before you could see it.
 //
 // This remounts a section's page component (via a `key` bump, which makes
 // React tear it down and build it fresh) the first time it's actually
 // scrolled into view, so its mount animations fire for real right as you
-// reach it — same thing a normal route visit already does, just
+// reach it — same thing visiting it as its own route used to do, just
 // re-triggered by scroll position instead of by navigating.
 //
 // A section that isn't already in view at mount (i.e. every page but
@@ -49,7 +48,7 @@ function sectionId(to: string): string {
 // looking like it "was already loaded" and only then decided to animate.
 //
 // Home is exempted from all of this — it's visible immediately at mount,
-// same as a normal visit to "/", so it only ever gets that one natural
+// same as it always was at "/", so it only ever gets that one natural
 // play. Without this exemption, the mount-time intersection check below
 // would still count as "entering view" and trigger an extra replay of
 // its own; and even guarding against only that specific redundant first
@@ -70,7 +69,7 @@ function sectionId(to: string): string {
 // restoration to have landed, and is short enough that even a genuinely
 // off-screen section being briefly un-hidden before this runs isn't
 // perceptible.
-function RevealSection({ id, label, Component }: { id: string; label: string; Component: ComponentType }) {
+function RevealSection({ id, Component }: { id: string; Component: ComponentType }) {
   const wrapRef = useRef<HTMLDivElement>(null)
   const [replayKey, setReplayKey] = useState(0)
   const [isRevealed, setIsRevealed] = useState(false)
@@ -136,7 +135,6 @@ function RevealSection({ id, label, Component }: { id: string; label: string; Co
       id={id}
       className={isRevealed ? 'preview-section' : 'preview-section preview-section--hidden'}
     >
-      <div className="preview-label">{label}</div>
       <Component key={replayKey} />
     </div>
   )
@@ -147,11 +145,11 @@ export default function Preview() {
 
   return (
     <div className="preview-stack">
-      <RevealSection id={home} label="Home" Component={Home} />
-      <RevealSection id={about} label="About" Component={About} />
-      <RevealSection id={resume} label="Resume" Component={Resume} />
-      <RevealSection id={projects} label="Projects" Component={Projects} />
-      <RevealSection id={contact} label="Contact" Component={Contact} />
+      <RevealSection id={home} Component={Home} />
+      <RevealSection id={about} Component={About} />
+      <RevealSection id={resume} Component={Resume} />
+      <RevealSection id={projects} Component={Projects} />
+      <RevealSection id={contact} Component={Contact} />
 
       {/* One footer for the whole stack, not one per page. */}
       <Footer />

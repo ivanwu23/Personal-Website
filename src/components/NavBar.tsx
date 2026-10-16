@@ -17,24 +17,25 @@ type NavBarProps = {
 // the session.
 let hasNavBarPlayed = false
 
-// On every real route, each link navigates to its own page as normal. On
-// the dev-only /preview route (everything stacked on one scrollable
-// page — see Preview.tsx), navigating away would just leave that page,
-// so links instead scroll to the matching in-page section.
+// The site's single real page ("/") stacks every page on one scrollable
+// view instead of routing between them (see Preview.tsx) — navigating
+// away would just leave that page, so links instead scroll to the
+// matching in-page section. The /about, /resume, etc. routes still exist
+// underneath (that's what Preview assembles), just nothing links to them
+// directly anymore.
 function sectionId(to: string): string {
   return to === '/' ? 'home' : to.slice(1)
 }
 
-// /preview loads every page's images (mountain photo, headshot, project
-// mockups, ...) at once, and none of them reserve their rendered size up
-// front — so as each one finishes loading after the click, it pushes
-// later sections further down the page. scrollIntoView's smooth animation
-// locks onto the target's position at the moment it's called and doesn't
-// re-read it as that shifts, so the scroll lands short of the section by
-// however much it moved after the click — this re-issues the scroll once
-// those loads have had time to settle, correcting any drift from the
-// first pass. (The real individual routes don't hit this — this is only
-// needed because /preview loads so many images on one page at once.)
+// Every page's images (mountain photo, headshot, project mockups, ...)
+// load at once on this one combined route, and none of them reserve
+// their rendered size up front — so as each one finishes loading after a
+// click, it pushes later sections further down the page. scrollIntoView's
+// smooth animation locks onto the target's position at the moment it's
+// called and doesn't re-read it as that shifts, so the scroll lands
+// short of the section by however much it moved after the click — this
+// re-issues the scroll once those loads have had time to settle,
+// correcting any drift from the first pass.
 function scrollToSection(id: string) {
   const el = document.getElementById(id)
   el?.scrollIntoView({ behavior: 'smooth' })
@@ -45,7 +46,7 @@ function scrollToSection(id: string) {
 
 export default function NavBar({ delay = 0 }: NavBarProps) {
   const [playIntro] = useState(() => !hasNavBarPlayed)
-  const isPreview = useLocation().pathname === '/preview'
+  const isSinglePage = useLocation().pathname === '/'
 
   useEffect(() => {
     hasNavBarPlayed = true
@@ -58,7 +59,7 @@ export default function NavBar({ delay = 0 }: NavBarProps) {
     >
       <ul className="navbar-links">
         {NAV_LINKS.map((link) =>
-          isPreview ? (
+          isSinglePage ? (
             <li key={link.to}>
               <a
                 href={`#${sectionId(link.to)}`}

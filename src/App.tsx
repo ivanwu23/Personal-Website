@@ -1,5 +1,4 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
-import Home from './pages/Home'
 import About from './pages/About'
 import Resume from './pages/Resume'
 import Projects from './pages/Projects'
@@ -15,7 +14,8 @@ function App() {
     <>
       <ScrollToTop />
       <Routes>
-        <Route path="/" element={<Home />} />
+        {/* Every page stacked on one scroll — see Preview.tsx. */}
+        <Route path="/" element={<Preview />} />
         <Route
           path="/about"
           element={
@@ -52,8 +52,6 @@ function App() {
             </RequireNavAccess>
           }
         />
-        {/* Dev-only, not in NAV_LINKS/RequireNavAccess — see Preview.tsx. */}
-        <Route path="/preview" element={<Preview />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       <ScrollHint />
