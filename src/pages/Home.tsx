@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import type { MouseEvent as ReactMouseEvent } from 'react'
 import NavBar from '../components/NavBar'
 import ContactBar from '../components/ContactBar'
 import ShootingStars from '../components/ShootingStars'
@@ -62,6 +63,18 @@ export default function Home() {
     return () => window.clearTimeout(timer)
   }, [])
 
+  // The name's hover glow (easter egg only — see .home-name-glow in
+  // Home.css, which stays invisible outside the dark theme). Tracked
+  // with plain DOM custom properties rather than React state, same as
+  // everywhere else position gets updated on every pointer move.
+  function handleNameMouseMove(event: ReactMouseEvent<HTMLHeadingElement>) {
+    const el = nameRef.current
+    if (!el) return
+    const rect = el.getBoundingClientRect()
+    el.style.setProperty('--mx', `${event.clientX - rect.left}px`)
+    el.style.setProperty('--my', `${event.clientY - rect.top}px`)
+  }
+
   useEffect(() => {
     function handlePointerMove(event: PointerEvent) {
       // Both axes, each -1 (top/left) to 1 (bottom/right), then
@@ -116,7 +129,15 @@ export default function Home() {
       </div>
 
       <div className="home-hero">
-        <h1 ref={nameRef} className="home-name">{NAME}</h1>
+        <h1 ref={nameRef} className="home-name" onMouseMove={handleNameMouseMove}>
+          <span className="home-name-text">{NAME}</span>
+          {/* Glowing duplicate, masked to a circle that follows the
+              cursor (see handleNameMouseMove above) — only shown on
+              hover, and only in the easter egg's dark theme. */}
+          <span className="home-name-glow" aria-hidden="true">
+            {NAME}
+          </span>
+        </h1>
         <p className="home-tagline">{TAGLINE}</p>
       </div>
 

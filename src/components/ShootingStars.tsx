@@ -16,6 +16,9 @@ type Star = {
   /** How strong this particular star's glow/opacity is, so some read
    *  brighter than others — only meaningful alongside `variant`. */
   brightness: number
+  /** Size multiplier — only meaningful alongside `variant`. Most land
+   *  near 1; occasionally one is much bigger (see makeStar). */
+  sizeScale: number
 }
 
 // How the stars look and how often they fly:
@@ -69,6 +72,10 @@ function makeStar(mode: Mode): Star {
     // A wide-ish range so the dimmest and brightest in a shower are
     // clearly different, without any going fully dark.
     brightness: mode.isEgg ? 0.55 + Math.random() * 0.45 : 1,
+    // Squared so it's weighted toward 1 (most stars roughly normal
+    // size) with only an occasional one landing up near 2x — "some"
+    // larger, not the whole shower.
+    sizeScale: mode.isEgg ? 1 + Math.random() ** 2 : 1,
   }
 }
 
@@ -130,7 +137,10 @@ export default function ShootingStars({ intro = false }: { intro?: boolean }) {
             left: `${star.left}%`,
             animationDuration: `${star.duration}ms`,
             ['--angle' as string]: `${star.angle}deg`,
-            ...(star.variant !== null && { ['--brightness' as string]: star.brightness }),
+            ...(star.variant !== null && {
+              ['--brightness' as string]: star.brightness,
+              ['--star-scale' as string]: star.sizeScale,
+            }),
           }}
           onAnimationEnd={() => removeStar(star.id)}
         />

@@ -6,7 +6,12 @@
    Same layout as .soundbar below (flex row, same gap/padding/bar
    count), so the two strips' bars line up in the same columns. */
 .soundbar-backdrop {
-  position: fixed;
+  /* Not fixed — anchored to the top of the document (i.e. Home, the
+     first thing on the page) rather than the viewport, so it stays put
+     there and scrolls away like any other content as soon as the page
+     scrolls, instead of tracking the screen the way a fixed element
+     would the whole time Home's still in view. */
+  position: absolute;
   top: 0;
   left: 0;
   right: 0;
@@ -32,12 +37,14 @@
 }
 
 .soundbar {
-  position: fixed;
+  /* See .soundbar-backdrop above — same reasoning, same anchor. */
+  position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  /* Under the nav pill (z-index 40), which floats over it; above
-     .soundbar-backdrop (34). */
+  /* Under the nav pill (z-index 40, and still fixed — it's unaffected
+     by this), which floats over it whenever the two overlap on screen;
+     above .soundbar-backdrop (34). */
   z-index: 35;
   display: flex;
   gap: 2px;
@@ -46,16 +53,6 @@
   padding: 0 2px;
   pointer-events: none;
   animation: soundbar-drop 0.6s var(--ease-out-expo) both;
-}
-
-/* Applied once Home (where the trigger star lives) has scrolled out of
-   view — see SoundBar.tsx. Same top:0, but now the document's rather
-   than the viewport's, so both strips just stay put at the top of the
-   page instead of continuing to float over whatever's scrolled into
-   view after Home. */
-.soundbar-backdrop.is-released,
-.soundbar.is-released {
-  position: absolute;
 }
 
 .soundbar-bar {

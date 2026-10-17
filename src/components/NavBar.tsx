@@ -28,21 +28,53 @@ function sectionId(to: string): string {
   return to === '/' ? 'home' : to.slice(1)
 }
 
+// Only one of these runs at a time — a second click (on the same link or
+// a different one) cancels whatever the last one was still doing.
+let activeObserver: ResizeObserver | null = null
+let settleTimer: number | undefined
+let safetyTimeout: number | undefined
+
 // Every page's images (mountain photo, headshot, project mockups, ...)
 // load at once on this one combined route, and none of them reserve
 // their rendered size up front — so as each one finishes loading after a
-// click, it pushes later sections further down the page. scrollIntoView's
-// smooth animation locks onto the target's position at the moment it's
-// called and doesn't re-read it as that shifts, so the scroll lands
-// short of the section by however much it moved after the click — this
-// re-issues the scroll once those loads have had time to settle,
-// correcting any drift from the first pass.
+// click, it can push the target section further down the page.
+//
+// This used to call scrollIntoView immediately and then issue
+// corrections as later layout shifts were detected. That doesn't really
+// work: browsers can't smoothly retarget a scroll that's already
+// animating, so a correction fired *during* it either cancels and
+// restarts the animation (a visible direction change) or, done
+// instantly, snaps straight there (a jarring mid-flight teleport) —
+// neither is just "arriving a little later," it's a visible glitch, and
+// it still wasn't reliably landing correctly either.
+//
+// Waiting for the page to actually stop shifting *before* ever starting
+// the scroll sidesteps the problem rather than reacting to it: there's
+// only ever one scrollIntoView call, so nothing is ever retargeted
+// mid-flight. In the common case (nothing left to load) that's a ~150ms
+// pause before the scroll starts, which is barely noticeable; a genuine
+// straggler just pushes that pause out a bit further, up to a point.
 function scrollToSection(id: string) {
-  const el = document.getElementById(id)
-  el?.scrollIntoView({ behavior: 'smooth' })
-  window.setTimeout(() => {
+  activeObserver?.disconnect()
+  window.clearTimeout(settleTimer)
+  window.clearTimeout(safetyTimeout)
+
+  function go() {
+    activeObserver?.disconnect()
+    window.clearTimeout(safetyTimeout)
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
-  }, 500)
+  }
+
+  const observer = new ResizeObserver(() => {
+    window.clearTimeout(settleTimer)
+    settleTimer = window.setTimeout(go, 150)
+  })
+  observer.observe(document.body)
+  activeObserver = observer
+  settleTimer = window.setTimeout(go, 150)
+  // However long it's taking to settle, don't wait forever — scroll to
+  // wherever the target is by then rather than never scrolling at all.
+  safetyTimeout = window.setTimeout(go, 4000)
 }
 
 export default function NavBar({ delay = 0 }: NavBarProps) {

@@ -120,6 +120,7 @@
 }
 
 .home-name {
+  position: relative;
   font-family: var(--font-name);
   font-weight: 600;
   font-size: clamp(26px, 8vw, 140px);
@@ -131,6 +132,48 @@
      type — a hard offset, not a soft drop shadow. */
   text-shadow: 0 8px 0 var(--name-shadow);
   margin: 0;
+}
+
+/* Easter egg only (see .home-name-glow below) — the cursor position
+   relative to .home-name, written by handleNameMouseMove in Home.tsx.
+   Defaults to the center so there's a sane position before the first
+   move. */
+.home-name-glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  color: transparent;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  /* Small blur radii on purpose: at a much larger size tried earlier,
+     the glow from each letter bled sideways into its neighbors —
+     overlapping enough across the whole word to read as the letters
+     themselves filling in red, rather than a glow sitting outside them.
+     Kept tight like this, it hugs each glyph's own edge instead. */
+  text-shadow:
+    0 0 3px #fff,
+    0 0 7px #fff,
+    0 0 13px #fff;
+  /* Reveals the glow only near the cursor, fading out with distance —
+     "stronger the closer the mouse is" is exactly what a radial mask
+     centered there, fading to transparent, already does on its own. */
+  -webkit-mask-image: radial-gradient(
+    circle 180px at var(--mx, 50%) var(--my, 50%),
+    black,
+    transparent 100%
+  );
+  mask-image: radial-gradient(
+    circle 180px at var(--mx, 50%) var(--my, 50%),
+    black,
+    transparent 100%
+  );
+}
+
+/* Only while actually hovering the name, and only in the party theme —
+   outside it, .home-name-glow stays at its default opacity: 0 no
+   matter what. */
+:root[data-theme='dark'] .home-name:hover .home-name-glow {
+  opacity: 1;
 }
 
 .home--intro .home-name {

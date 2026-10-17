@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import { useEasterEgg } from './EasterEggContext'
 import { isMusicPlaying } from './audio'
 import './SoundBar.css'
@@ -38,26 +38,6 @@ export default function SoundBar() {
   const { phase, isDark, analyser, exit } = useEasterEgg()
   const barsRef = useRef<(HTMLSpanElement | null)[]>([])
   const backdropBarsRef = useRef<(HTMLSpanElement | null)[]>([])
-  // Fixed (locked to the viewport) only while the Home section is still
-  // in view — Preview.tsx stacks every page on one scroll, and the
-  // trigger star lives on Home, so that's "the home page" here. Once
-  // it's scrolled past, both strips switch to absolute (see
-  // SoundBar.css): same top:0, but now relative to the document rather
-  // than the viewport, so they just stay put at the top of the page and
-  // scroll out of view with the rest of Home instead of continuing to
-  // float over whatever's scrolled into view after it.
-  const [isHomeInView, setIsHomeInView] = useState(true)
-
-  useEffect(() => {
-    if (!isDark) return
-    const home = document.getElementById('home')
-    if (!home) return
-    const observer = new IntersectionObserver(([entry]) => setIsHomeInView(entry.isIntersecting), {
-      threshold: 0,
-    })
-    observer.observe(home)
-    return () => observer.disconnect()
-  }, [isDark])
 
   useEffect(() => {
     if (!isDark) return
@@ -109,10 +89,7 @@ export default function SoundBar() {
         <>
           {/* Taller than .soundbar itself (see SoundBar.css) — shows
               past its edges and tips, like a backdrop behind it. */}
-          <div
-            className={isHomeInView ? 'soundbar-backdrop' : 'soundbar-backdrop is-released'}
-            aria-hidden="true"
-          >
+          <div className="soundbar-backdrop" aria-hidden="true">
             {Array.from({ length: BAR_COUNT }, (_, i) => (
               <span
                 key={i}
@@ -123,7 +100,7 @@ export default function SoundBar() {
               />
             ))}
           </div>
-          <div className={isHomeInView ? 'soundbar' : 'soundbar is-released'} aria-hidden="true">
+          <div className="soundbar" aria-hidden="true">
             {Array.from({ length: BAR_COUNT }, (_, i) => (
               <span
                 key={i}

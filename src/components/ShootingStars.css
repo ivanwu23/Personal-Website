@@ -39,15 +39,38 @@
    needle-tipped shape as the spinning star in EasterEggOverlay.tsx's
    STAR_PATH — rather than the usual streak-and-dot, in red or white
    (set by the --egg-red/--white variant class), with --brightness (see
-   ShootingStars.tsx) varying the glow and opacity so some read brighter
-   than others. A mask-image (matching the technique already used for
-   the home stars in Home.css) rather than a drawn shape, so it's cheap
-   to repaint for however many of these are ever on screen at once in
-   party mode. */
+   ShootingStars.tsx) varying the glow and opacity, and --star-scale
+   sizing some noticeably bigger than others.
+   The star shape and its trail are split across two pseudo-elements
+   rather than drawn directly on .shooting-star--egg itself: mask-image
+   clips an element's *entire* rendered output, trail included, so
+   applying it here would have cut the trail down to the star's own
+   tiny silhouette instead of letting it extend out behind it. */
 .shooting-star--egg {
-  width: clamp(10px, 1.6vw, 20px);
-  height: clamp(10px, 1.6vw, 20px);
+  width: calc(clamp(10px, 1.6vw, 20px) * var(--star-scale, 1));
+  height: calc(clamp(10px, 1.6vw, 20px) * var(--star-scale, 1));
   border-radius: 0;
+  background: none;
+  animation-name: shooting-star-move-bright;
+}
+
+/* The star shape — a mask-image (matching the technique already used
+   for the home stars in Home.css) rather than a drawn shape, so it's
+   cheap to repaint for however many of these are ever on screen at
+   once in party mode. Explicitly resets width/height/border-radius/
+   transform/box-shadow: .shooting-star::after (the normal variant's
+   dot) sets all of those for its own, much smaller fixed-size dot, and
+   simply inheriting them here (rather than this element filling its
+   parent's full, --star-scale'd box) is exactly that leftover sizing. */
+.shooting-star--egg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+  transform: none;
+  box-shadow: none;
   background: var(--egg-star-tint);
   /* Not opacity here — the flight keyframe below drives that (reading
      --brightness itself), since it's already animating the property. */
@@ -58,11 +81,31 @@
   mask-size: contain;
   -webkit-mask-repeat: no-repeat;
   mask-repeat: no-repeat;
-  animation-name: shooting-star-move-bright;
 }
 
-.shooting-star--egg::after {
-  content: none;
+/* The light trail — extends behind the star along the direction of
+   travel (the flight keyframe translates toward positive X, so "behind"
+   is to the left), fading out from the star's own tint to nothing.
+   Scales with --star-scale too, so a bigger star trails a bigger tail.
+   Holds near-full color for its first third (nearest the star) before
+   tapering off, rather than starting the fade immediately, so it reads
+   as a slower fade over a longer tail instead of a quick, short one. */
+.shooting-star--egg::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 100%;
+  width: calc(150px * var(--star-scale, 1));
+  height: calc(2px * var(--star-scale, 1));
+  transform: translateY(-50%);
+  border-radius: 999px;
+  background: linear-gradient(
+    to left,
+    var(--egg-star-tint) 0%,
+    var(--egg-star-tint) 32%,
+    transparent 100%
+  );
+  opacity: calc(0.4 + var(--brightness, 1) * 0.5);
 }
 
 .shooting-star--red {
